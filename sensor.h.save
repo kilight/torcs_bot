@@ -1,0 +1,61 @@
+/*	Sensor class for AI Light Torcs project
+	author: Robin Lehmann
+	date: 11.08.2011
+*/
+
+#ifndef sensorclass
+#define sensorclass
+
+#include <string>
+#include "SimpleParser.h"
+#include "sensor.h"
+
+class sensor{
+	public:
+		sensor();
+		sensor(string stateString);
+	
+		void setCurLapTime(double curLapTime) { this->curLapTime = curLapTime; }
+		double getCurLapTime() { return this->curLapTime; }
+
+		void setAngle(double angle) { this->angle = angle; }
+		double getAngle() { return this->angle; }
+
+		void setDistFromStart(double distFromStart) { this->distFromStart = distFromStart; }
+		double getDistFromStart() { return this->distFromStart; }
+
+		void setDistRaced(double distRaced) { this->distRaced = distRaced; }
+		double getDistRaced() { return this->distRaced; }
+
+		void setFuel(double fuel) { this->fuel = fuel; }
+		double getFuel() { return this->fuel; }
+
+		void set ( ) { this->  =  ; }
+		double get() { return this->  ;                 void set ( ) { this->  =  ; }
+                double get() { return this->  ; }
+}
+	
+	private:
+		double angle;
+		double curLapTime;
+		int damage;
+		double distFromStart;
+		double distRaced;
+		double fuel;
+		int gear;
+		double lastLapTime;
+		double* oppSensor;
+		double pos;
+		double rpm;
+		double speedX;
+		double speedY;
+		double speedZ;
+		double* trackSensor;
+		double trackPos;
+		double* wheelSpin;
+		double z;
+		double* focus;
+	
+};
+
+#endif

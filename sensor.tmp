@@ -1,0 +1,33 @@
+/*	Sensor class for AI Light Torcs project
+	author: Robin Lehmann
+	date: 13.08.2011
+	
+*/
+
+#include "sensor.h"
+
+sensor::sensor() {
+	
+}
+
+sensor::sensor(string sensors) {
+        SimpleParser::parse(sensors, (string) "angle", (float) this->angle);
+        SimpleParser::parse(sensors, "curLapTime", (float) this->curLapTime);
+        SimpleParser::parse(sensors, "damage", this->damage);
+        SimpleParser::parse(sensors, "distFromStart", (float) this->distFromStart);
+        SimpleParser::parse(sensors, "distRaced", this->distRaced);
+        SimpleParser::parse(sensors, "focus", this->focus, 5);
+        SimpleParser::parse(sensors, "fuel", this->fuel);
+        SimpleParser::parse(sensors, "gear", this->gear);
+        SimpleParser::parse(sensors, "lastLapTime", this->lastLapTime);
+        SimpleParser::parse(sensors, "opponents", this->oppSensor, 36);
+        SimpleParser::parse(sensors, "racePos", this->pos);
+        SimpleParser::parse(sensors, "rpm", this->rpm);
+        SimpleParser::parse(sensors, "speedX", this->speedX);
+        SimpleParser::parse(sensors, "speedY", this->speedY);
+        SimpleParser::parse(sensors, "speedZ", this->speedZ);
+        SimpleParser::parse(sensors, "track", this->trackSensor, 19);
+        SimpleParser::parse(sensors, "trackPos", this->trackPos);
+        SimpleParser::parse(sensors, "wheelSpinVel", this->wheelSpin, 4);
+        SimpleParser::parse(sensors, "z", this->z);
+}
