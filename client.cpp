@@ -16,7 +16,7 @@
 
 
 /* Uncomment the following lines under windows */
-#define WIN32									// maybe not necessary because already define
+//#define WIN32									// maybe not necessary because already define
 #define __DRIVER_CLASS__ SimpleDriver			// put here the name of your driver class
 #define __DRIVER_INCLUDE__ "SimpleDriver.h"		// put here the filename of your driver h\\eader
 
@@ -32,6 +32,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include __DRIVER_INCLUDE__
+#include "db.h"
 
 /*** defines for UDP *****/
 #define UDP_MSGLEN 1000
@@ -84,7 +85,23 @@ int main(int argc, char *argv[])
     fd_set readSet;
     char buf[UDP_MSGLEN];
 
+	db test;
+	db test2("/media/data/log/");
+	test2.calcFastestLaps();
+	string temp = "/home/lehmannr/ai/config.txt";
+	
 
+	vector< lap* >* tmp;
+	for(int k = 0; k < test2.getTracks()->size(); k++) {
+		tmp = test2.getFastest((*(test2.getTracks()))[k].getName());
+		
+		for(int i = 0; i < tmp->size(); i++) {
+			for(int j = 0; j < (*tmp)[i]->getData()->size(); j++) {
+				//cout << (*(*tmp)[i]->getData())[j].toString() << endl;
+			}
+		}
+	}
+    
 #ifdef WIN32 
      /* WinSock Startup */
 

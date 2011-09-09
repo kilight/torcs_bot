@@ -18,9 +18,7 @@ class file{
 	public:
 		file();
 		file(string location);
-		~file() {
-			delete filestream;
-		}
+		~file() {}
 	
 		void setName(string name) { this->name = name; }
 		string getName() { return this->name; }

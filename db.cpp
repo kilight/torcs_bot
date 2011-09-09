@@ -63,7 +63,7 @@ db::db(string location) {
 	fastestLap.push_back(fill);
 	fill = new lap();
 	fill->setSize(10000.00);
-	fastestLap.push_back(fill);	
+	fastestLap.push_back(fill);
 	
 	while(!filelist.eof()) {
 		char filename[256];
@@ -136,8 +136,13 @@ db::db(string location) {
 		file* insertFile = new file(location);
 		insertFile->setName(filename);
 		insertFile->calcSize();
+
+		cout << "inserted bot: " << botname << endl;
 		
 		this->insertBot(insertBot, insertFile, true);
+
+		cout << " and track: " << trackname << endl;
+		
 		this->insertTrack(insertTrack, insertFile, false);
 
 	}
@@ -195,7 +200,7 @@ void db::calcFastestLaps() {
 						tmplap->setLength(s2.getDistFromStart());				
 						s2 = s;
 						dataPoints++;
-						//cout << "lap " << num << " finished." << endl;
+						cout << "lap " << num << " finished." << endl;
 						break;
 					}
 					s2 = s;
@@ -485,8 +490,7 @@ bool db::insertBot(bot botinsert, file* fileinsert, bool fileadd = false) {
 		// add bot and file to their corresponding vectors
 		this->files.push_back(*fileinsert);
 	}
-	
-	
+		
 	bool botadd = true;
 	for(int i = 0; i < bots.size(); i++) {
 		if (bots[i].getName() == botinsert.getName())
@@ -500,12 +504,10 @@ bool db::insertBot(bot botinsert, file* fileinsert, bool fileadd = false) {
 	// if the bot doesnt exist in the map, a new vector for the files has to be created
 	vector<int> botFilelist;
 	botFilelist.push_back(files.size() - 1);
-	
 	// create a new mapentry for the bot
 	if(botmap.size() < bots.size()) {
 		botmap.push_back(botFilelist);
 	}
-	
 	// if there has been an entry, we add the new file to the filevector
 	else {
 		botmap[bots.size() - 1].push_back(files.size());
