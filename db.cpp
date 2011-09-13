@@ -149,59 +149,6 @@ db::db(string location) {
 	
 	
 	/*
-	// find the smallest files for each track and save the data
-
-	fstream smallestTracks;
-	smallestTracks.open("/home/lehmannr/ai/stracks.txt", fstream::out);
-			
-	for(int i = 0; i < tracks.size(); i++) {
-		pair<int, int>* trackSizes = new pair<int, int> [trackmap[i].size()];
-	
-		for(int j = 0; j < trackmap[i].size(); j++) {
-			trackSizes[j].first = files[trackmap[i][j]].getSize();
-			trackSizes[j].second = trackmap[i][j];
-		}
-		
-		// bubble sort
-		
-		int n = trackmap[i].size();
-		bool vertauscht;
-		do {
-			vertauscht = false;
-			for(int j = 0; j < n - 1; j++) {
-				if(trackSizes[j].first > trackSizes[j+1].first) {
-					pair<int, int> tmp = trackSizes[j];
-					trackSizes[j] = trackSizes[j+1];
-					trackSizes[j+1] = tmp;
-					vertauscht = true;
-				}
-			}
-			n--;
-		} while (vertauscht && n > 1);
-		
-		// write 5 smallest filesizes in a file
-		
-		smallestTracks << tracks[i].getName() << endl;
-		for(int j = 0; j < 7; j++) {
-
-			smallestTracks << files[trackSizes[j].second].getName() << endl;
-			smallestTracks << trackSizes[j].first << endl;
-			
-			// copy those files in a seperate directory
-	
-			string tmp = "cp /media/data/log/\"" + files[trackSizes[j].second].getName() + "\"";
-			tmp += " /media/data/fastest/";
-			system(tmp.c_str());
-		}
-		smallestTracks << endl;
-		smallestTracks << endl;
-	}
-	
-	smallestTracks.close();
-	
-	int hi;
-	cout << "HI" << endl;
-	cin >> hi;	
 	
 	*/
 	
@@ -269,6 +216,7 @@ void db::calcFastestLaps() {
 
 			float fastest = tmplap->getLength();
 			float longest = tmplap->getLength();
+			int approximateSizePerPoint = tmplap->getSize() / tmplap->getNumPoints();
 			
 			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() ; num++) {
 			
@@ -288,11 +236,9 @@ void db::calcFastestLaps() {
 					
 					files[trackmap[k][i]].setPosition(templap->getPosInFile());
 					sensor tmp = files[trackmap[k][i]].fetchNextData();
-					
-					int approximateSizePerPoint = tmplap->getSize() / tmplap->getNumPoints();
-					
+										
 					files[trackmap[k][i]].setPosition(files[trackmap[k][i]].getSize() - 5 * approximateSizePerPoint);
-					sensor tmp2;				
+					sensor tmp2 = files[trackmap[k][i]].fetchNextData();				
 					
 					templap->setNumPoints(dataPoints);
 					
@@ -681,4 +627,59 @@ bool db::loadFastestSensors(string trackname) {
 
 void db::saveLap(lap* toSave) {
 	
+}
+
+void db::findSmallestFiles() {
+
+	// find the smallest files for each track and save the data
+
+	fstream smallestTracks;
+	smallestTracks.open("/home/lehmannr/ai/stracks.txt", fstream::out);
+			
+	for(int i = 0; i < tracks.size(); i++) {
+		pair<int, int>* trackSizes = new pair<int, int> [trackmap[i].size()];
+	
+		for(int j = 0; j < trackmap[i].size(); j++) {
+			trackSizes[j].first = files[trackmap[i][j]].getSize();
+			trackSizes[j].second = trackmap[i][j];
+		}
+		
+		// bubble sort
+		
+		int n = trackmap[i].size();
+		bool vertauscht;
+		do {
+			vertauscht = false;
+			for(int j = 0; j < n - 1; j++) {
+				if(trackSizes[j].first > trackSizes[j+1].first) {
+					pair<int, int> tmp = trackSizes[j];
+					trackSizes[j] = trackSizes[j+1];
+					trackSizes[j+1] = tmp;
+					vertauscht = true;
+				}
+			}
+			n--;
+		} while (vertauscht && n > 1);
+		
+		// write 7 smallest filesizes in a file
+		
+		smallestTracks << tracks[i].getName() << endl;
+		for(int j = 0; j < 7; j++) {
+
+			smallestTracks << files[trackSizes[j].second].getName() << endl;
+			smallestTracks << trackSizes[j].first << endl;
+			
+			/*
+			// copy those files in a seperate directory
+	
+			string tmp = "cp /media/data/log/\"" + files[trackSizes[j].second].getName() + "\"";
+			tmp += " /media/data/fastest/";
+			system(tmp.c_str());
+			*/
+		}
+		smallestTracks << endl;
+		smallestTracks << endl;
+	}
+	
+	smallestTracks.close();	
 }

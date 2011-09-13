@@ -62,7 +62,47 @@ using namespace std;
 void parse_args(int argc, char *argv[], char *hostName, unsigned int &serverPort, char *id, unsigned int &maxEpisodes,
 		  unsigned int &maxSteps, char *trackName, BaseDriver::tstage &stage);
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) {
+	db* test;
+	do {
+		cout << "SimpleDriver Option Menu" << endl;
+		cout << "1. Start SimpleDriver" << endl;
+		cout << "2. Create Database and load files" << endl;
+		cout << "3. Train neural network with the loaded data" << endl;
+		cout << "0. to quit." << endl;
+		int input;
+		cin >> input;
+		
+		if(input == 1) {
+			startClient(argc, argv);
+		}
+		if(input == 2) {
+			test = new db("/media/data/fastest/");
+		}
+		if(input == 3) {
+			
+		}
+	}
+	while(input != 0);
+		
+	test->calcFastestLaps();
+	string temp = "/home/lehmannr/ai/config.txt";
+	
+	vector< lap* >* tmp;
+	for(int k = 0; k < test->getTracks()->size(); k++) {
+		tmp = test->getFastest((*(test->getTracks()))[k].getName());
+		
+		for(int i = 0; i < tmp->size(); i++) {
+			for(int j = 0; j < (*tmp)[i]->getData()->size(); j++) {
+				//cout << (*(*tmp)[i]->getData())[j].toString() << endl;
+			}
+		}
+	}
+	
+}
+
+
+int startClient(int argc, char* argv[])
 {
     SOCKET socketDescriptor;
     int numRead;
@@ -84,23 +124,6 @@ int main(int argc, char *argv[])
     struct timeval timeVal;
     fd_set readSet;
     char buf[UDP_MSGLEN];
-
-	db test;
-	db test2("/media/data/log/");
-	test2.calcFastestLaps();
-	string temp = "/home/lehmannr/ai/config.txt";
-	
-
-	vector< lap* >* tmp;
-	for(int k = 0; k < test2.getTracks()->size(); k++) {
-		tmp = test2.getFastest((*(test2.getTracks()))[k].getName());
-		
-		for(int i = 0; i < tmp->size(); i++) {
-			for(int j = 0; j < (*tmp)[i]->getData()->size(); j++) {
-				//cout << (*(*tmp)[i]->getData())[j].toString() << endl;
-			}
-		}
-	}
     
 #ifdef WIN32 
      /* WinSock Startup */

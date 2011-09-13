@@ -50,6 +50,7 @@ class db {
 		bool restoreFastest(string trackname);
 		bool loadFastestSensors(string trackname);
 		void saveLap(lap* toSave);
+		void findSmallestFiles();
 	
 		int numbots;
 		int numtracks;
