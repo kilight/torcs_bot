@@ -61,16 +61,19 @@ using namespace std;
 //		bool &noise, double &noiseAVG, double &noiseSTD, long &seed, char *trackName, BaseDriver::tstage &stage);
 void parse_args(int argc, char *argv[], char *hostName, unsigned int &serverPort, char *id, unsigned int &maxEpisodes,
 		  unsigned int &maxSteps, char *trackName, BaseDriver::tstage &stage);
+		  
+int startClient(int argc, char* argv[]);
 
 int main(int argc, char *argv[]) {
 	db* test;
+	int input;
 	do {
 		cout << "SimpleDriver Option Menu" << endl;
 		cout << "1. Start SimpleDriver" << endl;
 		cout << "2. Create Database and load files" << endl;
 		cout << "3. Train neural network with the loaded data" << endl;
 		cout << "0. to quit." << endl;
-		int input;
+		
 		cin >> input;
 		
 		if(input == 1) {
@@ -84,7 +87,8 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	while(input != 0);
-		
+	
+/*	
 	test->calcFastestLaps();
 	string temp = "/home/lehmannr/ai/config.txt";
 	
@@ -98,7 +102,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	
+*/	
 }
 
 
