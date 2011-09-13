@@ -65,8 +65,7 @@ sensor file::fetchNextData() {
 	char s[1000];
 	stringstream ss;
 	filestream->getline(s, 1000, '\n');
-	lastread = filestream->gcount();
-	linesRead += lastread;
+	linesRead = filestream->tellg();
 	ss << s;
 	retval = sensor(ss.str());
 	if(filestream->eof()) {
@@ -76,6 +75,9 @@ sensor file::fetchNextData() {
 	return retval;
 }
 
+void file::setPosition(int pos) {
+	filestream->seekg(pos);
+}
 
 sensor** file::fetchData(int num) {
 	filestream->seekg(linesRead);
@@ -85,8 +87,7 @@ sensor** file::fetchData(int num) {
 	stringstream ss;
 	for(int i = 0; i < num; i++) {
 		filestream->getline(s, 1000, '\n');
-		lastread = filestream->gcount();
-		linesRead += lastread;
+		linesRead = filestream->tellg();
 		ss << s;
 		tmp = new sensor(ss.str());
 		if(filestream->eof()) {
@@ -102,13 +103,12 @@ sensor** file::fetchData(int num) {
 sensor** file::fetchData(int num, int pos) {
 	filestream->seekg(pos);
 	sensor** retval = new sensor*[num];
-	char s[500];
+	char s[1000];
 	stringstream ss;
 	sensor* tmp;
 	for(int i = 0; i < num; i++) {
-		filestream->getline(s, 500, '\n');
-		lastread = filestream->gcount();
-		linesRead += lastread;
+		filestream->getline(s, 1000, '\n');
+		linesRead = filestream->tellg();
 		ss << s;
 		tmp = new sensor(ss.str());
 		if(filestream->eof()) {

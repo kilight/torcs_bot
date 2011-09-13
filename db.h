@@ -49,6 +49,7 @@ class db {
 	private:
 		bool restoreFastest(string trackname);
 		bool loadFastestSensors(string trackname);
+		void saveLap(lap* toSave);
 	
 		int numbots;
 		int numtracks;

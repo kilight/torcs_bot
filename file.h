@@ -25,7 +25,13 @@ class file{
 		
 		void calcSize();
 		void setSize(int size) { this->size = size; }
-		int getSize() { return this->size; }
+		int getSize() { if (size != 0)
+						return this->size;
+					else {
+						calcSize();
+						return this->size;
+					}
+				}
 		
 		void setNumlaps(int numlaps) { this->numlaps = numlaps; }
 		int getNumlaps() { return this->numlaps; }
@@ -37,6 +43,7 @@ class file{
 		sensor** fetchData(int num, int pos);
 		
 		int getPos();
+		void setPosition(int pos);
 
 		bool eof();
 		
