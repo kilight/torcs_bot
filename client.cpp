@@ -61,17 +61,18 @@ using namespace std;
 //		bool &noise, double &noiseAVG, double &noiseSTD, long &seed, char *trackName, BaseDriver::tstage &stage);
 void parse_args(int argc, char *argv[], char *hostName, unsigned int &serverPort, char *id, unsigned int &maxEpisodes,
 		  unsigned int &maxSteps, char *trackName, BaseDriver::tstage &stage);
-		  
+
 int startClient(int argc, char* argv[]);
 
 int main(int argc, char *argv[]) {
-	db* test;
 	int input;
+	db* test = NULL;
 	do {
 		cout << "SimpleDriver Option Menu" << endl;
 		cout << "1. Start SimpleDriver" << endl;
 		cout << "2. Create Database and load files" << endl;
 		cout << "3. Train neural network with the loaded data" << endl;
+		cout << "4. Calc Fastest Laps." << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;
@@ -80,15 +81,20 @@ int main(int argc, char *argv[]) {
 			startClient(argc, argv);
 		}
 		if(input == 2) {
-			test = new db("/media/data/fastest/");
+			if(test != NULL) 
+				delete test;
+			test = new db("/media/data/samecar/");
 		}
 		if(input == 3) {
 			
 		}
+		if(input == 4) {
+			test->calcFastestLaps();
+		}
 	}
 	while(input != 0);
 	
-/*	
+	/*
 	test->calcFastestLaps();
 	string temp = "/home/lehmannr/ai/config.txt";
 	
@@ -101,8 +107,8 @@ int main(int argc, char *argv[]) {
 				//cout << (*(*tmp)[i]->getData())[j].toString() << endl;
 			}
 		}
-	}
-*/	
+	} */
+	
 }
 
 
