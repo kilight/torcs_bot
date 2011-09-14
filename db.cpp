@@ -180,7 +180,7 @@ void db::calcFastestLaps() {
 			sensor s2;
 			int dataPoints = 0;
 			int num = 0;
-			vector<lap> laps;
+			vector<lap> lapsInFile;
 			
 			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() && num < 20 ; num++) {
 			
@@ -205,16 +205,16 @@ void db::calcFastestLaps() {
 				tmplap->setSize(files[trackmap[k][i]].getPos() - tmplap->getPosInFile());
 				tmplap->setNumPoints(dataPoints);
 				
-				saveLap(tmplap);
+				// saveLap(tmplap);
 				
 				cout << "NumPoints " << dataPoints << " in lap " << num << " of track " << tracks[k].getName() << " in file " << files[trackmap[k][i]].getName() << endl;
 				
-				laps.push_back(*tmplap);
+				lapsInFile.push_back(*tmplap);
 				j += dataPoints;
 			}
 			
-			this->laps.push_back(laps);
-			files[i].setNumlaps(laps.size());
+			this->laps.push_back(lapsInFile);
+			files[i].setNumlaps(lapsInFile.size());
 			
 			// close file
 			files[trackmap[k][i]].close();
