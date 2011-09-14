@@ -3,6 +3,7 @@
 
 sensor::sensor(string sensors)
 {
+	SimpleParser::parse(sensors, "numPnt", this->numPnt);
         SimpleParser::parse(sensors, "angle", this->angle);
         SimpleParser::parse(sensors, "curLapTime", this->curLapTime);
         SimpleParser::parse(sensors, "damage", this->damage);
@@ -22,13 +23,19 @@ sensor::sensor(string sensors)
         SimpleParser::parse(sensors, "trackPos", this->trackPos);
         SimpleParser::parse(sensors, "wheelSpinVel", this->wheelSpinVel, 4);
         SimpleParser::parse(sensors, "z", this->z);
+	SimpleParser::parse(sensors, "accel", this->accel);
+	SimpleParser::parse(sensors, "brake", this->brake);
+	SimpleParser::parse(sensors, "gearCmd", this->gearCmd);
+	SimpleParser::parse(sensors, "steer", this->steer);
+	SimpleParser::parse(sensors, "clutch", this->clutch);
 }
 
 string
 sensor::toString()
 {
 	string str;
-	str  = SimpleParser::stringify("angle", this->angle);
+	str  = SimpleParser::stringify("numPnt", this->numPnt);
+	str += SimpleParser::stringify("angle", this->angle);
 	str += SimpleParser::stringify("curLapTime", this->curLapTime);
 	str += SimpleParser::stringify("damage", this->damage);
 	str += SimpleParser::stringify("distFromStart", this->distFromStart);
@@ -47,6 +54,11 @@ sensor::toString()
 	str += SimpleParser::stringify("trackPos", this->trackPos);
 	str += SimpleParser::stringify("wheelSpinVel", this->wheelSpinVel, 4);
 	str += SimpleParser::stringify("z", this->z);
+	str += SimpleParser::stringify("accel", this->accel);
+	str += SimpleParser::stringify("brake", this->brake);
+	str += SimpleParser::stringify("gearCmd", this->gearCmd);
+	str += SimpleParser::stringify("steer", this->steer);
+	str += SimpleParser::stringify("clutch", this->clutch);	
 	
 	return str;
 	        

@@ -197,7 +197,7 @@ void db::calcFastestLaps() {
 			int dataPoints = 0;
 			int num = 0;
 			
-			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() ; num++) {
+			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() || num == 19 ; num++) {
 			
 				
 				lap * tmplap = new lap();

@@ -17,6 +17,7 @@ class sensor
 {
 
 private:
+	int numPnt;
         float angle;
         float curLapTime;
         float damage;
@@ -36,7 +37,11 @@ private:
         float trackPos;
         float wheelSpinVel[4];
         float z;
-        
+	float accel;
+	float brake;
+	int gearCmd;
+	float steer;
+        float clutch;
 
 public:
 	
@@ -48,6 +53,14 @@ public:
 
         /* Getter and setter methods */
         
+	int getNumPnt() {
+		return numPnt;
+	}
+	
+	void setNumPnt(int numPnt) {
+		this->numPnt = numPnt;
+	}
+		
         float getAngle();
         
         void setAngle(float angle);
@@ -124,6 +137,45 @@ public:
 
         void setZ(float z);
 
+	float getAccel() {
+		return accel;
+	}
+	
+	void setAccel(float accel) {
+		this->accel = accel;
+	}
+	
+	float getBrake() {
+		return brake;
+	}
+	
+	void setBrake(float brake) {
+		this->brake = brake;
+	}
+	
+	int getGearCmd() {
+		return gearCmd;
+	}
+	
+	void setGearCmd(int gearCmd) {
+		this->gearCmd = gearCmd;
+	}
+	
+	float getSteer() {
+		return steer;
+	}
+	
+	void setSteer(float steer) {
+		this->steer = steer;
+	}
+	
+	float getClutch() {
+		return clutch;
+	}
+	
+	void setClutch(float clutch) {
+		this->clutch = clutch;
+	}
 
 };
 
