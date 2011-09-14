@@ -30,13 +30,6 @@ class db {
 		bool insertBot(bot botinsert, file* fileinsert, bool fileadd);
 		bool insertTrack(track trackinsert, file* fileinsert, bool fileadd);
 	
-		vector< lap* >* getFastest(string trackname) {
-			cout << "restore" << endl;
-			restoreFastest(trackname);
-			cout << "load sensors" << endl;
-			loadFastestSensors(trackname);
-			return &fastestLap; 			
-		}
 		vector< track >* getTracks() { return &tracks; }
 //		vector< bot >* getBots() { return &bots; }
 //		vector< vector<int> >* getBotmap() { return &botmap; }
@@ -49,6 +42,7 @@ class db {
 	private:
 		bool restoreFastest(string trackname);
 		bool loadFastestSensors(string trackname);
+	
 		void saveLap(lap* toSave);
 		void findSmallestFiles();
 	
@@ -60,7 +54,6 @@ class db {
 		vector< track > tracks;
 		vector< vector< lap > > laps;
 		vector< file > files;
-		vector< lap* > fastestLap;
 };
 
 #endif

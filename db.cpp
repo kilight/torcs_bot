@@ -34,7 +34,6 @@ db::~db() {
 	}
 	laps.clear();
 	files.clear();
-	fastestLap.clear();
 }
 
 db::db(string location) {
@@ -55,17 +54,6 @@ db::db(string location) {
 	// Read the files.txt and analyze each file using the algorithm to create the files
 	// figure out the number of tracks and bots and save them in the database instance
 	
-	/*
-	lap* fill = new lap();
-	fill->setSize(10000000.00);
-	fastestLap.push_back(fill);
-	fill = new lap();
-	fill->setSize(10000000.00);
-	fastestLap.push_back(fill);
-	fill = new lap();
-	fill->setSize(10000000.00);
-	fastestLap.push_back(fill);
-	*/
 	
 	while(!filelist.eof()) {
 		char filename[256];
@@ -149,11 +137,7 @@ db::db(string location) {
 
 	}
 	
-	
-	/*
-	
-	*/
-	
+		
 	numbots = bots.size();
 	numtracks = tracks.size();
 
@@ -196,10 +180,10 @@ void db::calcFastestLaps() {
 			sensor s2;
 			int dataPoints = 0;
 			int num = 0;
+			vector<lap> laps;
 			
-			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() || num == 19 ; num++) {
+			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() && num < 20 ; num++) {
 			
-				
 				lap * tmplap = new lap();
 				tmplap->setPosInRun(num + 1);
 				tmplap->setPosInPoints(j);
@@ -222,88 +206,23 @@ void db::calcFastestLaps() {
 				tmplap->setNumPoints(dataPoints);
 				
 				saveLap(tmplap);
-
-/*				// create a new lap and set its starting position relative to the file
-				lap * templap = new lap();
-				templap->setPosInRun(num + 1);
-				templap->setPosInPoints(j);
-				templap->setPosInFile(files[trackmap[k][i]].getPos());
-				templap->setFile(trackmap[k][i]);
-				
-				// determine the length of the lap
-				
-				if(files[trackmap[k][i]].getPos() + fastest > files[trackmap[k][i]].getSize()) {
-					templap->setSize(files[trackmap[k][i]].getSize() - templap->getPosInFile());
-					
-					// calculate the number of dataPoints in the current lap via the time difference of the first to the last sensor value
-					
-					files[trackmap[k][i]].setPosition(templap->getPosInFile());
-					sensor tmp = files[trackmap[k][i]].fetchNextData();
-										
-					files[trackmap[k][i]].setPosition(files[trackmap[k][i]].getSize() - 5 * approximateSizePerPoint);
-					sensor tmp2 = files[trackmap[k][i]].fetchNextData();				
-					
-					templap->setNumPoints(dataPoints);
-					
-				}
-				
-				templap->setSize(files[trackmap[k][i]].getPos() - templap->getPosInFile());				
-				templap->setNumPoints(dataPoints); */
 				
 				cout << "NumPoints " << dataPoints << " in lap " << num << " of track " << tracks[k].getName() << " in file " << files[trackmap[k][i]].getName() << endl;
 				
-				/*
-				if(tmplap->getNumPoints() < fastestLap[0]->getNumPoints()) {
-					delete fastestLap[2];
-					fastestLap[2] = fastestLap[1];
-					fastestLap[1] = fastestLap[0];
-					fastestLap[0] = tmplap;
-				}
-				else {
-					if(tmplap->getNumPoints() < fastestLap[1]->getNumPoints()) {
-						delete fastestLap[2];
-						fastestLap[2] = fastestLap[1];
-						fastestLap[1] = tmplap;					
-					}
-					else {
-						if(templap->getNumPoints() < fastestLap[2]->getNumPoints()) {
-							delete fastestLap[2];
-							fastestLap[2] = tmplap;
-						}
-						else {
-							delete tmplap;
-						}
-					}
-				} */
-				// lapsInFile.push_back(*tmplap);
+				laps.push_back(*tmplap);
 				j += dataPoints;
 			}
-			// this->laps.push_back(lapsInFile);
-			// files[i].setNumlaps(lapsInFile.size());
+			
+			this->laps.push_back(laps);
+			files[i].setNumlaps(laps.size());
 			
 			// close file
 			files[trackmap[k][i]].close();
 		}
-		/*
-		fstream savefile;
-		savefile.open(tracks[k].getName().c_str(), fstream::out);
-		
-		savefile << fastestLap.size() << endl;
-		for(int i = 0; i < fastestLap.size(); i++) {
-			savefile << fastestLap[i]->getPosInFile() << endl;
-			savefile << fastestLap[i]->getPosInRun() << endl;
-			savefile << fastestLap[i]->getLength() << endl;
-			savefile << fastestLap[i]->getNumPoints() << endl;
-			savefile << fastestLap[i]->getPosInPoints() << endl;
-			savefile << fastestLap[i]->getSize() << endl;
-			savefile << fastestLap[i]->getFile() << endl;
-		}
-		
-		fastestLap.clear();
-		*/
 	}
 }	
 
+/*
 bool db::restoreFastest(string trackname) {
 	fstream savefile;
 	
@@ -350,6 +269,7 @@ bool db::restoreFastest(string trackname) {
 	}	
 	return true;
 }
+*/
 
 bool db::dbrestore(string storeLocation) {
 	// open the file at storeLocation and load the data into the datastructures, order is determined by db::dbsave
@@ -612,6 +532,7 @@ bool db::insertTrack(track trackinsert, file* fileinsert, bool fileadd = false) 
 	return true;
 }
 
+/*
 bool db::loadFastestSensors(string trackname) {
 	
 	//cout << fastestLap.size() << endl;
@@ -628,7 +549,7 @@ bool db::loadFastestSensors(string trackname) {
 	}
 
 	return true;
-}
+} */
 
 void db::saveLap(lap* toSave) {
 	fstream laps;
