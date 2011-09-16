@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 			if(test != NULL) 
 				delete test;
 			fstream directory;
-			directory.open("./directory.txt");
+			directory.open("./lib.db/directory.txt");
 			stringstream ss1;
 			char c[500];
 			directory.getline(c, 500, '\n');
