@@ -9,7 +9,7 @@
 #include <sstream>
 #include <cstring>
 #include <cassert>
-#include "SimpleParser.h"
+#include "../SimpleParser.h"
 
 using namespace std;
 

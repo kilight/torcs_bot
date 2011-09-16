@@ -32,7 +32,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include __DRIVER_INCLUDE__
-#include "db.h"
+#include "./lib.db/db.h"
 
 /*** defines for UDP *****/
 #define UDP_MSGLEN 1000
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 		cout << "1. Start SimpleDriver" << endl;
 		cout << "2. Create Database and load files" << endl;
 		cout << "3. Train neural network with the loaded data" << endl;
-		cout << "4. Calc Fastest Laps." << endl;
+		cout << "4. Calc Laps." << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;

@@ -1,6 +1,6 @@
 /* example fo a database application */
 
-#include "db.h"
+#include "../lib.db/db.h"
 
 class example {
 	public:

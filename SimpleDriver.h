@@ -24,7 +24,7 @@
 #include "SimpleParser.h"
 #include "WrapperBaseDriver.h"
 
-#include "shift.h"
+#include "./lib.ki/shift.h"
 
 #define PI 3.14159265
 

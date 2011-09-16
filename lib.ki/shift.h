@@ -18,12 +18,12 @@
 #include<cmath>
 using namespace std;
 
-#include"BaseDriver.h"
-#include"CarState.h"
-#include"CarControl.h"
-#include"SimpleParser.h"
-#include"WrapperBaseDriver.h"
-#include"db.h"
+#include"../BaseDriver.h"
+#include"../CarState.h"
+#include"../CarControl.h"
+#include"../SimpleParser.h"
+#include"../WrapperBaseDriver.h"
+#include"../lib.db/db.h"
 
 class shift_learn
 {
