@@ -155,7 +155,7 @@ db::db(string location, string savedir) {
 	} */	
 }
 
-void db::calcFastestLaps() {
+void db::calcLaps() {
 	// analyze the files to create the lap linklist and remember the data in tracks
 	for(int k = 0; k < trackmap.size(); k++) {
 		for(int i = 0; i < trackmap[k].size(); i++) {

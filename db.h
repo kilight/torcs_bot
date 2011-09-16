@@ -37,7 +37,8 @@ class db {
 	
 		int getNumbots() { return this->numbots; }
 		int getNumtracks() { return this->numtracks; }
-		void calcFastestLaps();
+		void calcLaps();
+		void addLaps();
 	
 	private:
 		bool restoreFastest(string trackname);
