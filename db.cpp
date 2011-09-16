@@ -229,6 +229,10 @@ void db::calcLaps() {
 	this->dbsave(savedir + "database2.txt");
 }	
 
+void addLaps() {
+
+}
+
 /*
 bool db::restoreFastest(string trackname) {
 	fstream savefile;
