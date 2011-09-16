@@ -83,13 +83,22 @@ int main(int argc, char *argv[]) {
 		if(input == 2) {
 			if(test != NULL) 
 				delete test;
-			test = new db("/media/data/samecar/", "/home/lehmannr/ai/");
+			fstream directory;
+			directory.open("./directory.txt");
+			stringstream ss1;
+			char c[500];
+			directory.getline(c, 500, '\n');
+			ss1 << c;
+			directory.getline(c, 500, '\n');
+			stringstream ss2;
+			ss2 << c;
+			test = new db(ss1.str(), ss2.str());
 		}
 		if(input == 3) {
 			
 		}
 		if(input == 4) {
-			test->calcFastestLaps();
+			test->calcLaps();
 		}
 	}
 	while(input != 0);

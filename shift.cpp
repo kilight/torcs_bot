@@ -8,7 +8,7 @@ shift_learn::shift_learn()
 {	
 	db test;
 	db test2;
-	test2.calcFastestLaps();
+	test2.calcLaps();
 	string temp="config.txt";
 	// set_0(db);
 	// set_1(db);

@@ -8,7 +8,6 @@
 
 #include <string>
 #include <sstream>
-#include "lap.h"
 #include "sensor2.h"
 #include <fstream>
 

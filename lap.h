@@ -7,15 +7,17 @@
 #define lapclass
 
 #include "sensor2.h"
-#include <vector>
 #include "file.h"
+#include <vector>
 
 class lap{
 	public:
 		lap();
 		~lap() {
-			for( int i = 0; i < data.size(); i++) {
-				delete data[i];
+			if(data.size() != 0) {
+				for( int i = 0; i < data.size(); i++) {
+					delete data[i];
+				}
 			}
 			data.clear();
 		}
@@ -24,7 +26,16 @@ class lap{
                 int getPosInFile() { return this->posInFile; }
 
                 void setData ( vector< sensor* > data ) { this->data = data; }
-                vector< sensor* >* getData() { return &data; }
+                vector< sensor* >* getData();
+		
+		void clearData() { 
+			if(data.size() != 0) {
+				for( int i = 0; i < data.size(); i++) {
+					delete data[i];
+				}
+			}
+			data.clear();
+		}
 
                 void setPosInRun ( int posInRun ) { this->posInRun = posInRun; }
                 int getPosInRun() { return this->posInRun; }
@@ -43,10 +54,14 @@ class lap{
 
 		void setFile (int ifile) { this->iFile = ifile; }
 		int getFile () { return iFile; }
+		
+		void setFileLink (file filelink) { this->filelink = filelink; }
+		file* getFileLink() { return &filelink; } 
 	
 	private:
 		int posInFile;
 		vector< sensor* > data;
+		file filelink;
 		int posInRun;
 		double length;
 		int numPoints;

@@ -35,6 +35,10 @@ class db {
 //		vector< vector<int> >* getBotmap() { return &botmap; }
 		vector< vector<int> >* getTrackmap() { return &trackmap; }
 	
+		vector< vector<lap> >* getLaps() {
+			return &laps;
+		}
+		
 		int getNumbots() { return this->numbots; }
 		int getNumtracks() { return this->numtracks; }
 		void calcLaps();
