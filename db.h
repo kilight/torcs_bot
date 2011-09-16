@@ -21,7 +21,7 @@ using namespace std;
 class db {
 	public:
 		db();
-		db(string location);
+		db(string location, string savedir);
 		~db();
 		
 		bool dbrestore(string storeLocation); // Restore a dbsave configuration
@@ -46,6 +46,8 @@ class db {
 		void saveLap(lap* toSave);
 		void findSmallestFiles();
 	
+		string savedir;
+		string location;
 		int numbots;
 		int numtracks;
 		vector<vector<int> > botmap;

@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 		if(input == 2) {
 			if(test != NULL) 
 				delete test;
-			test = new db("/media/data/samecar/");
+			test = new db("/media/data/samecar/", "/home/lehmannr/ai/");
 		}
 		if(input == 3) {
 			

@@ -36,15 +36,21 @@ db::~db() {
 	files.clear();
 }
 
-db::db(string location) {
-//	system("ls /home/lehmannr/ai/testdata/ > /home/lehmannr/ai/files.txt");
+db::db(string location, string savedir) {
+	this->savedir = savedir;
+	this->location = location;
 	string tmp = "ls " + location;
-	tmp += " > /home/lehmannr/ai/files.txt";
+	tmp += " > ";
+	tmp += savedir;
+	tmp += "files.txt";
 	
 	system(tmp.c_str());
 	
 	fstream filelist;
-	filelist.open("/home/lehmannr/ai/files.txt", fstream::in);
+	tmp = "";
+	tmp += savedir;
+	tmp += "files.txt";
+	filelist.open(tmp.c_str(), fstream::in);
 	
 	if(filelist.fail())
 	{
@@ -220,6 +226,7 @@ void db::calcFastestLaps() {
 			files[trackmap[k][i]].close();
 		}
 	}
+	this->dbsave(savedir + "database2.txt");
 }	
 
 /*
@@ -306,10 +313,10 @@ bool db::dbrestore(string storeLocation) {
 	for(int i = 0; i < limit; i++) {
 		savefile.getline(t, 500, '\n'); 
 		insertTrack.setName(t);
-		savefile.getline(t, 500, '\n');
-		blap.first = t;
-		savefile.getline(t, 500, '\n'); 
-		blap.second = atoi(t);
+//		savefile.getline(t, 500, '\n');
+//		blap.first = t;
+//		savefile.getline(t, 500, '\n'); 
+//		blap.second = atoi(t);
 		insertTrack.setBestLap(blap);
 		tracks.push_back(insertTrack);
 	}
@@ -397,8 +404,8 @@ bool db::dbsave(string storeLocation) {
 	savefile << tracks.size() << endl;		
 	for(int i = 0; i < tracks.size(); i++) {
 		savefile << tracks[i].getName() << endl;
-		savefile << tracks[i].getBestLap().first << endl;
-		savefile << tracks[i].getBestLap().second << endl;
+		//savefile << tracks[i].getBestLap().first << endl;
+		//savefile << tracks[i].getBestLap().second << endl;
 	}
 	
 	savefile << laps.size() << endl;
@@ -553,7 +560,9 @@ bool db::loadFastestSensors(string trackname) {
 
 void db::saveLap(lap* toSave) {
 	fstream laps;
-	laps.open("/home/lehmannr/ai/laps.txt", fstream::out | fstream::app);
+	string tmp = savedir;
+	tmp +=  "laps.txt";
+	laps.open(tmp.c_str(), fstream::out | fstream::app);
 	laps << tracks[toSave->getFile()].getName() << endl;
 	laps << "(posInRun " << toSave->getPosInRun() << ")";
 	laps << "(posInFile " << toSave->getPosInFile() << ")";
