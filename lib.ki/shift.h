@@ -3,11 +3,6 @@
 */
 /*		argument.set		value.set
 		------------		---------
-		int speedX			int gear
-		int speedY			bool clutch
-		int speedZ
-		int rpm
-		int gear
 */
 
 #ifndef shift_class
@@ -17,67 +12,23 @@
 #include<fstream>
 #include<cmath>
 using namespace std;
-
-#include"../BaseDriver.h"
 #include"../CarState.h"
-#include"../CarControl.h"
-#include"../SimpleParser.h"
-#include"../WrapperBaseDriver.h"
 #include"../lib.db/db.h"
-
-class shift_learn
-{
-protected:	// int gear_y;		// y_0
-			// int clutch;		// y_1
-
-private:	 shift_learn();
-			~shift_learn();
-
-			// void set_0(DataBase &db);
-			// void set_1(DataBase &db);
-};
+// #include"../lib.fann/include/fann.h"
 
 class shift_object
 {
-public:		int gear_x;			// x_0
-			int rpm;			// x_1
-			int rpm_puffer;		// x_2
-			int speed;			// x_3
-			int speed_puffer;	// x_4
+private:	db* database;	
+		
+public:		 shift_object();		// race constructor
+		 shift_object(db* database);	// learn constructor
+		~shift_object();
 
-			int speedX_puffer;	// x_5
-			int speedY_puffer;	// x_6
+		int race(CarState &cs);				// common racing interface
+		int tree(CarState &cs);				// desicion.tree including online reinforcement.build
+		int simple_interpolation_racer(CarState &cs);
 
-			float clutch;
-			float clutchMax;
-			float clutchDelta;
-			float clutchRange;
-			float clutchDeltaTime;
-			float clutchDeltaRaced;
-			float clutchDec;
-			float clutchMaxModifier;
-			float clutchMaxTime;
-
-			
-public:		 shift_object();			
-			 shift_object(CarState &cs);	// race constructor
-			~shift_object();
-
-			void set_0(CarState &cs);
-			void set_1(CarState &cs);
-			void set_2(void);
-			void set_3(CarState &cs);
-			void set_4(void);
-
-			int get_0(void);
-			int get_1(void);
-			int get_2(void);
-			int get_3(void);
-			int get_4(void);
-
-			int race(CarState &cs);			// racing method
-			void clutching(CarState &cs);	// clutch calculator
-
+		void slp_1(float rpm,int gear);			// single.layer.perceptron learn function
+		void simple_interpolation(float rpm,int gear);	// simple learn funktion
 };
-
 #endif
