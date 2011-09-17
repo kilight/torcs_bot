@@ -73,6 +73,7 @@ int main(int argc, char *argv[]) {
 		cout << "2. Create Database and load files" << endl;
 		cout << "3. Train neural network with the loaded data" << endl;
 		cout << "4. Calc Laps." << endl;
+		cout << "5. Restore Database from file" << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;
@@ -96,6 +97,18 @@ int main(int argc, char *argv[]) {
 		}
 		if(input == 4) {
 			test->calcLaps();
+		}
+		if(input == 5) {
+			if(test != NULL)
+				delete test;
+			fstream directory;
+			directory.open("./lib.db/directory.txt");
+			stringstream ss1;
+			char c[500];
+			directory.getline(c, 500, '\n');
+			ss1 << c;
+			test = new db(ss1.str());
+			test->restoreDbaddLaps();
 		}
 	}
 	while(input != 0);

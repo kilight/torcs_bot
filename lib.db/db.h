@@ -42,7 +42,8 @@ class db {
 		int getNumbots() { return this->numbots; }
 		int getNumtracks() { return this->numtracks; }
 		void calcLaps();
-		void addLaps();
+		void restoreDbaddLaps();
+		void getBotsTracksFiles();
 	
 	private:
 		bool restoreFastest(string trackname);
