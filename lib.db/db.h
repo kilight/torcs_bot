@@ -21,7 +21,7 @@ using namespace std;
 class db {
 	public:
 		db();
-		db(string location);
+		db(string location, string savedir);
 		~db();
 		
 		bool dbrestore(string storeLocation); // Restore a dbsave configuration
