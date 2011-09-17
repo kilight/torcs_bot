@@ -4,6 +4,9 @@
 */
 
 #include "lap.h"
+#include <iostream>
+
+using namespace std;
 
 lap::lap() {
 

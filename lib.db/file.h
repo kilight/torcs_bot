@@ -35,6 +35,9 @@ class file{
 		void setNumlaps(int numlaps) { this->numlaps = numlaps; }
 		int getNumlaps() { return this->numlaps; }
 
+		void setPath(string path) { this->path = path; }
+		string getPath() { return this->path; }
+
 		int getLastread() { return this->lastread; }
 		
 		sensor fetchNextData();

@@ -40,11 +40,13 @@ void file::open() {
 		return;
 	else {		
 		string temp = path + name;
+		cout << "attempting to open file (with path): " << temp << endl;
 		this->filestream->open(temp.c_str(), fstream::in);
-		cout << "file " << name << " opened." << endl;
 		if(filestream->fail()) {
 			cout << "cannot open file " << name << endl;
+			throw "Could not open file" + name;
 		}
+		cout << "file " << name << " opened." << endl;
 		op = true;
 	}
 }
@@ -84,8 +86,8 @@ sensor** file::fetchData(int num) {
 	sensor** retval = new sensor*[num];
 	char s[1000];
 	sensor* tmp;
-	stringstream ss;
 	for(int i = 0; i < num; i++) {
+		stringstream ss;
 		filestream->getline(s, 1000, '\n');
 		linesRead = filestream->tellg();
 		ss << s;
@@ -95,7 +97,6 @@ sensor** file::fetchData(int num) {
 			tmp->setCurLapTime(-10.0);
 		}
 		retval[i] = tmp;
-		ss.flush();
 	}
 	return retval;
 }
@@ -103,14 +104,21 @@ sensor** file::fetchData(int num) {
 sensor** file::fetchData(int num, int pos) {
 	filestream->seekg(pos);
 	sensor** retval = new sensor*[num];
-	char s[1000];
-	stringstream ss;
+	char* s;
 	sensor* tmp;
+//	cout << "fetching " << num << " points from postition " << pos << endl; 
 	for(int i = 0; i < num; i++) {
+		stringstream ss;
+		s = new char[1000];		
 		filestream->getline(s, 1000, '\n');
 		linesRead = filestream->tellg();
+//		cout << "linesRead: " << linesRead << endl;
 		ss << s;
+		delete s;
+//		cout << "line " << i << " from file " << name << endl;
+//		cout << ss.str() << endl << endl;
 		tmp = new sensor(ss.str());
+//		cout << "sensor from that line: " << tmp->toString() << endl << endl;
 		if(filestream->eof()) {
 			tmp->setDistFromStart(-10.0);
 			tmp->setCurLapTime(-10.0);

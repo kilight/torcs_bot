@@ -36,9 +36,12 @@ db::~db() {
 	files.clear();
 }
 
-db::db(string location, string savedir) {
-	this->savedir = savedir;
+db::db(string location) {
+	this->savedir = "./lib.db/";
 	this->location = location;
+}
+
+void db::getBotsTracksFiles() {
 	string tmp = "ls " + location;
 	tmp += " > ";
 	tmp += savedir;
@@ -234,9 +237,9 @@ void db::restoreDbaddLaps() {
 	cout << "starting restore" << endl;
 	this->dbrestore("./lib.db/database.txt");
 	cout << "inserting lap->file connection" << endl;
-	for(int k = 0; k < trackmap.size(); k++) {
-		for(int i = 0; i < trackmap[k].size(); i++) {
-			laps[k][i].setFileLink(files[trackmap[k][i]]);
+	for(int k = 0; k < laps.size(); k++) {
+		for(int i = 0; i < laps[k].size(); i++) {
+			laps[k][i].setFileLink(files[k]);
 
 		}
 	}
@@ -344,32 +347,32 @@ bool db::dbrestore(string storeLocation) {
 	vector<lap> vLaps;
 
 	cout << "restoring laps" << endl;
-	cout << "there are " << limit << " tracks calculated" << endl;	
+//	cout << "there are " << limit << " tracks calculated" << endl;	
 	for(int i = 0; i < limit; i++) {
 		savefile.getline(t, 500, '\n'); 		
 		int limit2 = atoi(t);
-		cout << "the first track has " << limit2 << " laps." << endl;
+//		cout << "the first track has " << limit2 << " laps." << endl;
 		for(int j = 0; j < limit2; j++) {
-			cout << "adding posinfile to lap" << endl;
+//			cout << "adding posinfile to lap" << endl;
 			savefile.getline(t, 500, '\n'); 
 			iLaps.setPosInFile(atoi(t));
-			cout << "adding posinrun to lap" << endl;			
+//			cout << "adding posinrun to lap" << endl;			
 			savefile.getline(t, 500, '\n');
 			iLaps.setPosInRun(atoi(t));
-			cout << "adding length to lap" << endl;
+//			cout << "adding length to lap" << endl;
 			savefile.getline(t, 500, '\n'); 
 			iLaps.setLength(atof(t));
-			cout << "adding numpoints to lap" << endl;
+//			cout << "adding numpoints to lap" << endl;
 			savefile.getline(t, 500, '\n'); 
 			iLaps.setNumPoints(atoi(t));
-			cout << "adding posinpoints to lap" << endl;
+//			cout << "adding posinpoints to lap" << endl;
 			savefile.getline(t, 500, '\n'); 
 			iLaps.setPosInPoints(atoi(t));
-			cout << "adding size to lap" << endl;
+//			cout << "adding size to lap" << endl;
 			savefile.getline(t, 500, '\n'); 
 			iLaps.setSize(atoi(t));
 			vLaps.push_back(iLaps);
-			cout << "pushed back lap nr. " << iLaps.getPosInRun() << " of this run" << endl;
+//			cout << "pushed back lap nr. " << iLaps.getPosInRun() << " of this run" << endl;
 		}
 		laps.push_back(vLaps);
 		vLaps.clear();
@@ -377,12 +380,14 @@ bool db::dbrestore(string storeLocation) {
 
 	savefile.getline(t, 500, '\n');
 	limit = atoi(t);
-	file iFile;
+	file iFile(location);
 
 	cout << "restoring files" << endl;
+	cout << "number of files: " << limit << endl;
 	for(int i = 0; i < limit; i++) {
 		savefile.getline(t, 500, '\n'); 
 		iFile.setName(t);
+		cout << "name: " << iFile.getName() << endl;
 		savefile.getline(t, 500, '\n'); 
 		iFile.setNumlaps(atoi(t));
 		savefile.getline(t, 500, '\n'); 

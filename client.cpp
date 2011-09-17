@@ -33,6 +33,7 @@
 #include <cstdio>
 #include __DRIVER_INCLUDE__
 #include "./lib.db/db.h"
+#include "./lib.db/exampledb.h"
 
 /*** defines for UDP *****/
 #define UDP_MSGLEN 1000
@@ -73,6 +74,7 @@ int main(int argc, char *argv[]) {
 		cout << "2. Create Database and load files, calculating all stuff from the files (might take some time)" << endl;
 		cout << "3. Train neural network with the loaded data" << endl;
 		cout << "4. Restore Database from file" << endl;
+		cout << "5. test to fix file -> lap transfer (there has to be a database loaded)" << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;
@@ -101,12 +103,20 @@ int main(int argc, char *argv[]) {
 				delete test;
 			fstream directory;
 			directory.open("./lib.db/directory.txt");
+			if(directory.fail())
+				cout << "cannot open file directory.txt" << endl;
 			stringstream ss1;
 			char c[500];
 			directory.getline(c, 500, '\n');
 			ss1 << c;
 			test = new db(ss1.str());
 			test->restoreDbaddLaps();
+		}
+		if(input == 5) {
+			if(test != NULL) {
+				exampledb ex(test);
+				ex.start();
+			}
 		}
 	}
 	while(input != 0);

@@ -21,7 +21,7 @@ using namespace std;
 class db {
 	public:
 		db();
-		db(string location, string savedir);
+		db(string location);
 		~db();
 		
 		bool dbrestore(string storeLocation); // Restore a dbsave configuration
@@ -31,6 +31,7 @@ class db {
 		bool insertTrack(track trackinsert, file* fileinsert, bool fileadd);
 	
 		vector< track >* getTracks() { return &tracks; }
+		vector< file >* getFiles() { return &files; }
 //		vector< bot >* getBots() { return &bots; }
 //		vector< vector<int> >* getBotmap() { return &botmap; }
 		vector< vector<int> >* getTrackmap() { return &trackmap; }
