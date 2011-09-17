@@ -242,7 +242,7 @@ void db::restoreDbaddLaps() {
 	}
 	cout << "saving generated database" << endl;
 	this->dbsave("./lib.db/testdb.txt");
-
+}
 
 /*
 bool db::restoreFastest(string trackname) {
