@@ -70,10 +70,9 @@ int main(int argc, char *argv[]) {
 	do {
 		cout << "SimpleDriver Option Menu" << endl;
 		cout << "1. Start SimpleDriver" << endl;
-		cout << "2. Create Database and load files" << endl;
+		cout << "2. Create Database and load files, calculating all stuff from the files (might take some time)" << endl;
 		cout << "3. Train neural network with the loaded data" << endl;
-		cout << "4. Calc Laps." << endl;
-		cout << "5. Restore Database from file" << endl;
+		cout << "4. Restore Database from file" << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;
@@ -91,14 +90,13 @@ int main(int argc, char *argv[]) {
 			directory.getline(c, 500, '\n');
 			ss1 << c;
 			test = new db(ss1.str());
+			test->getBotsTracksFiles();
+			test->calcLaps();
 		}
 		if(input == 3) {
 			
 		}
 		if(input == 4) {
-			test->calcLaps();
-		}
-		if(input == 5) {
 			if(test != NULL)
 				delete test;
 			fstream directory;
