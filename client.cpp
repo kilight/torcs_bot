@@ -89,10 +89,7 @@ int main(int argc, char *argv[]) {
 			char c[500];
 			directory.getline(c, 500, '\n');
 			ss1 << c;
-			directory.getline(c, 500, '\n');
-			stringstream ss2;
-			ss2 << c;
-			test = new db(ss1.str(), ss2.str());
+			test = new db(ss1.str());
 		}
 		if(input == 3) {
 			

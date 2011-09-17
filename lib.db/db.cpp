@@ -36,9 +36,12 @@ db::~db() {
 	files.clear();
 }
 
-db::db(string location, string savedir) {
-	this->savedir = savedir;
+db::db(string location) {
+	this->savedir = "./lib.db/";
 	this->location = location;
+}
+
+void db::getBotsTracksFiles() {
 	string tmp = "ls " + location;
 	tmp += " > ";
 	tmp += savedir;
@@ -195,6 +198,7 @@ void db::calcLaps() {
 				tmplap->setPosInPoints(j);
 				tmplap->setPosInFile(files[trackmap[k][i]].getPos());
 				tmplap->setFile(trackmap[k][i]);
+				tmplap->setFileLink(files[trackmap[k][i]]);
 				dataPoints = 0;
 				for(sensor s = s2; 1 == 1 ; dataPoints++) {					
 					s = files[trackmap[k][i]].fetchNextData();
@@ -226,11 +230,12 @@ void db::calcLaps() {
 			files[trackmap[k][i]].close();
 		}
 	}
-	this->dbsave(savedir + "database2.txt");
+	this->dbsave("./lib.db/database.txt");
 }	
 
 void addLaps() {
-
+	this->dbrestore("./lib.db/database.txt");
+	
 }
 
 /*
