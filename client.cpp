@@ -32,6 +32,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include __DRIVER_INCLUDE__
+#include "./lib.ki/drive.h"
 #include "./lib.db/db.h"
 #include "./lib.db/exampledb.h"
 
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]) {
 	int input;
 	db* test = NULL;
 	do {
-		cout << "SimpleDriver Option Menu" << endl;
+		cout << "   SimpleDriver Option Menu" << endl;
 		cout << "1. Start SimpleDriver" << endl;
 		cout << "2. Create Database and load files, calculating all stuff from the files (might take some time)" << endl;
 		cout << "3. Train neural network with the loaded data" << endl;
@@ -95,8 +96,9 @@ int main(int argc, char *argv[]) {
 			test->getBotsTracksFiles();
 			test->calcLaps();
 		}
-		if(input == 3) {
-			
+		if(input == 3) 
+		{
+			drive_object* drive=new drive_object(test);		
 		}
 		if(input == 4) {
 			if(test != NULL)

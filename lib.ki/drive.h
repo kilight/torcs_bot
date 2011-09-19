@@ -14,12 +14,12 @@
 using namespace std;
 #include"../CarState.h"
 #include"../lib.db/db.h"
-// #include"../lib.fann/include/fann.h"
-
+#include"fann_net.h"
 
 class drive_object
 {
-private:	db* database;	
+private:	db* database;
+		fann_net net;	
 		
 public:		 drive_object();		// race constructor
 		 drive_object(db* database);	// learn constructor

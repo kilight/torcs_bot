@@ -2,30 +2,29 @@
 		10.09.2011
 */
 #include"drive.h"
+
 /***  class drive_object  ****
 *****************************/
 drive_object::drive_object(){}	
 drive_object::drive_object(db* database)
 {
 	this->database=database;
+	net.generateNet();
 
-
-
-	fstream data;
-	data.open("../lib.ki/drive.miner",fstream::out|fstream::app);
-	cout<<"Start example"<<endl;
-
-
-
-	// alle sensordaten eines bots einer strecke in eine datei schreiben
-	for(int i=0;i<database->getTracks()->size();i++)
+	// alle tracks laden
+	for(int i=0;i<1;i++)
 	{                
 		// rundenbetrachtung
 		// das (* .... )[] braucht man, da die Funktion getLaps() einem einen Zeiger auf einen Array zurückliefert
 		// die -1 am Ende ist wegen dem Start bei 0
 
-                for(int j=0;j<(*database->getLaps())[i].size();j++)
+                for(int j=0;j<10;j++)
 		{
+
+			net.setNumData((*database->getLaps())[i][j].getNumPoints());
+			net.setNumInput(22);
+			net.setNumOut(3);			
+
 			for(int k=0;k<(*database->getLaps())[i][j].getNumPoints();k++)
 			{
 				// beispiel um das k-te Element zu speichern
@@ -34,11 +33,25 @@ drive_object::drive_object(db* database)
 				// da es ein Vektor ist geht hier [] aber wegen Zeiger => (* ... )
 				tmp=(*(*database->getLaps())[i][j].getData())[k];
 
-				// Place Code here
+				fann_type* input = new fann_type[22];
+				fann_type* output = new fann_type[3];
 
+				input[0]=(float) tmp->getAngle();
+				input[1]=(float) tmp->getSpeedX();
+				input[2]=(float) tmp->getSpeedY();
+				input[3]=(float) tmp->getTrackPos();
+				for(int i=0;i<19;i++){input[i+4]=(float) tmp->getTrack(i);}
+
+				output[0]=(float) tmp->getAccel();
+				output[1]=(float) tmp->getBrake();
+				output[2]=(float) tmp->getSteer();
+
+				net.saveInputFieldVector(input);
+				net.saveOutputFieldVector(output);
 			}
+			net.inputTraindata();
+			net.train();
 		}
 	}
-	data.close();
 }
 drive_object::~drive_object(){}

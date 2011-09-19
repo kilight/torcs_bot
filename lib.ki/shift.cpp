@@ -5,19 +5,13 @@
 /***  class shift_object  ****
 *****************************/
 shift_object::shift_object(){}	
+/*
 shift_object::shift_object(db* database)
 {
 	this->database=database;
+	net.generateNet();
 
-
-
-	fstream data;
-	data.open("../lib.ki/shift.miner",fstream::out|fstream::app);
-	cout<<"Start example"<<endl;
-
-
-
-	// alle sensordaten eines bots einer strecke in eine datei schreiben
+	// alle tracks laden
 	for(int i=0;i<database->getTracks()->size();i++)
 	{                
 		// rundenbetrachtung
@@ -26,6 +20,11 @@ shift_object::shift_object(db* database)
 
                 for(int j=0;j<(*database->getLaps())[i].size();j++)
 		{
+
+			net.setNumData((*database->getLaps())[i][j].getNumPoints());
+			net.setNumInput(3);
+			net.setOutput(1);			
+
 			for(int k=0;k<(*database->getLaps())[i][j].getNumPoints();k++)
 			{
 				// beispiel um das k-te Element zu speichern
@@ -33,12 +32,27 @@ shift_object::shift_object(db* database)
 				// getData() gibt einen Zeiger auf den Vektor zurück in dem Zeiger auf die Sensordaten gespeichert sind
 				// da es ein Vektor ist geht hier [] aber wegen Zeiger => (* ... )
 				tmp=(*(*database->getLaps())[i][j].getData())[k];
-				slp_1(tmp->getRpm(),tmp->getGear());
+
+				// Place Code here
+
+				fann_type* input = new fann_type[3];
+				fann_type* output = new fann_type[1];
+
+				input[0] = (float) tmp->getRpm();
+				input[1] = (float) tmp->getGear();
+				input[2] = (float) tmp->getSpeedX();
+
+				output[0] = (float) tmp->getGearCmd();
+
+				net.saveInputFieldVector(input);
+				net.saveOutputFieldVector(output);
 			}
+			net.inputTraindata();
+			net.train();
 		}
 	}
-	data.close();
 }
+*/
 shift_object::~shift_object(){}
 /**   class shift_object race.net   **
 *************************************/
