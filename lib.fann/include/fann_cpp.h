@@ -915,12 +915,13 @@ public:
         */ 
         bool create_standard(unsigned int num_layers, ...)
         {
-            va_list layers;
-            va_start(layers, num_layers);
-            bool status = create_standard_array(num_layers,
-                reinterpret_cast<const unsigned int *>(layers));
-            va_end(layers);
-            return status;
+		va_list layers;
+		va_start(layers, num_layers);
+		unsigned int lay[num_layers];
+		for( int i = 0; i<num_layers; i++ ) lay[i] = va_arg(layers,unsigned int);
+		bool status = create_standard_array(num_layers,lay);
+		va_end(layers);
+		return status;
         }
 
         /* Method: create_standard_array

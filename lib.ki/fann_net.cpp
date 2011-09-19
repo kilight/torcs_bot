@@ -76,18 +76,18 @@ void fann_net::inputTraindata() {
 }
 
 void fann_net::generateNet() {
+	std::ios::sync_with_stdio();
+ 	cout << endl << "Creating network." << endl;
 
-    cout << endl << "Creating network." << endl;
+        net.create_standard(num_layers, num_input, num_hidden, num_output);
 
-    net.create_standard(num_layers, num_input, num_hidden, num_output);
+        net.set_learning_rate(learning_rate);
 
-    net.set_learning_rate(learning_rate);
-
-    net.set_activation_steepness_hidden(1.0);
-    net.set_activation_steepness_output(1.0);
+        net.set_activation_steepness_hidden(1.0);
+        net.set_activation_steepness_output(1.0);
     
-    net.set_activation_function_hidden(FANN::SIGMOID_SYMMETRIC_STEPWISE);
-    net.set_activation_function_output(FANN::SIGMOID_SYMMETRIC_STEPWISE);
+        net.set_activation_function_hidden(FANN::SIGMOID_SYMMETRIC_STEPWISE);
+        net.set_activation_function_output(FANN::SIGMOID_SYMMETRIC_STEPWISE);
 }
 
 // Callback function that simply prints the information to cout
