@@ -22,8 +22,8 @@ drive_object::drive_object(db* database)
 		{
 
 			net.setNumData((*database->getLaps())[i][j].getNumPoints());
-			net.setNumInput(4);
-			net.setNumOut(3);
+			net.setNumInput(num_inputs);
+			net.setNumOut(num_outputs);
 
 			fann_type** output = new fann_type*[net.getNumData()];
 			fann_type** input = new fann_type*[net.getNumData()];			
@@ -38,8 +38,8 @@ drive_object::drive_object(db* database)
 				// da es ein Vektor ist geht hier [] aber wegen Zeiger => (* ... )
 				tmp=(*(*database->getLaps())[i][j].getData())[k];
 
-				inputvec = new fann_type[4];
-				outputvec = new fann_type[3];
+				inputvec = new fann_type[num_inputs];
+				outputvec = new fann_type[num_outputs];
 
 				inputvec[0]=(float) tmp->getAngle();
 				inputvec[1]=(float) tmp->getSpeedX();
@@ -75,10 +75,16 @@ drive_object::~drive_object()
 	
 }
 
-float drive_object::getAccel(){return accel;}
-float drive_object::getBrake(){return brake;}
-float drive_object::getSteer(){return steer;}
+int drive_object::race(CarState &cs) {		// common racing interface
+	fann_type* input = new fann_type[num_inputs];
+	fann_type* output = new fann_type[num_outputs];	
+	input[0] = cs.getAngle();
+	input[1] = cs.getSpeedX();
+	input[2] = cs.getSpeedY();
+	input[3] = cs.getTrackPos();
 
-
-
-int race(CarState &cs);		// common racing interface
+	output = net.run(input);
+	accel = output[0];
+	brake = output[1];
+	steer = output[2];
+}

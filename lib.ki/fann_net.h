@@ -33,6 +33,8 @@ public:
 		input = new fann_type*[numData];
 	}
 
+	fann_type* run(fann_type* input) { return net.run(input); }
+
 	void inputTraindata(fann_type** input, fann_type** output);
 
 	int getNumData() { return this->numData; }
