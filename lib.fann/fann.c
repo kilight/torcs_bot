@@ -55,7 +55,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_standard(unsigned int num_layers
 }
 
 FANN_EXTERNAL struct fann *FANN_API fann_create_standard_array(unsigned int num_layers, 
-															   unsigned int *layers)
+															   const unsigned int *layers)
 {
 	return fann_create_sparse_array(1, num_layers, layers);	
 }
@@ -90,7 +90,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse(float connection_rate,
 
 FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_rate,
 															 unsigned int num_layers,
-															 unsigned int *layers)
+															 const unsigned int *layers)
 {
 	struct fann_layer *layer_it, *last_layer, *prev_layer;
 	struct fann *ann;
@@ -101,7 +101,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 	unsigned int num_neurons_in, num_neurons_out, i, j;
 	unsigned int min_connections, max_connections, num_connections;
 	unsigned int connections_per_neuron, allocated_connections;
-	unsigned int random_number, found_connection;
+	unsigned int random_number, found_connection, tmp_con;
 
 #ifdef FIXEDFANN
 	unsigned int decimal_point;
@@ -227,7 +227,8 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 			last_neuron = layer_it->last_neuron - 1;
 			for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
 			{
-				for(i = neuron_it->first_con; i != neuron_it->last_con; i++)
+				tmp_con = neuron_it->last_con - 1;
+				for(i = neuron_it->first_con; i != tmp_con; i++)
 				{
 					ann->weights[i] = (fann_type) fann_random_weight();
 					/* these connections are still initialized for fully connected networks, to allow
@@ -235,6 +236,10 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 					 */
 					ann->connections[i] = prev_layer->first_neuron + (i - neuron_it->first_con);
 				}
+
+				/* bias weight */
+				ann->weights[tmp_con] = (fann_type) fann_random_bias_weight();
+				ann->connections[tmp_con] = prev_layer->first_neuron + (tmp_con - neuron_it->first_con);
 			}
 #ifdef DEBUG
 			prev_layer_size = layer_it->last_neuron - layer_it->first_neuron;
@@ -273,7 +278,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_sparse_array(float connection_ra
 			{
 
 				ann->connections[neuron_it->first_con] = bias_neuron;
-				ann->weights[neuron_it->first_con] = (fann_type) fann_random_weight();
+				ann->weights[neuron_it->first_con] = (fann_type) fann_random_bias_weight();
 			}
 
 			/* then connect all neurons in the input layer */
@@ -387,7 +392,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut(unsigned int num_layers
 }
 
 FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(unsigned int num_layers,
-															   unsigned int *layers)
+															   const unsigned int *layers)
 {
 	struct fann_layer *layer_it, *layer_it2, *last_layer;
 	struct fann *ann;
@@ -413,7 +418,7 @@ FANN_EXTERNAL struct fann *FANN_API fann_create_shortcut_array(unsigned int num_
 	}
 
 	ann->connection_rate = 1;
-	ann->shortcut_connections = 1;
+	ann->network_type = FANN_NETTYPE_SHORTCUT;
 #ifdef FIXEDFANN
 	decimal_point = ann->decimal_point;
 	multiplier = ann->multiplier;
@@ -595,7 +600,7 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 
 			if(ann->connection_rate >= 1)
 			{
-				if(ann->shortcut_connections)
+				if(ann->network_type == FANN_NETTYPE_SHORTCUT)
 				{
 					neurons = ann->first_layer->first_neuron;
 				}
@@ -720,13 +725,29 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 												  -multiplier, multiplier, neuron_sum);
 					break;
 				case FANN_THRESHOLD:
-					neuron_it->value = (fann_type) ((neuron_sum < 0) ? 0 : 1);
+					neuron_it->value = (fann_type) ((neuron_sum < 0) ? 0 : multiplier);
 					break;
 				case FANN_THRESHOLD_SYMMETRIC:
-					neuron_it->value = (fann_type) ((neuron_sum < 0) ? -1 : 1);
+					neuron_it->value = (fann_type) ((neuron_sum < 0) ? -multiplier : multiplier);
+					break;
+				case FANN_LINEAR:
+					neuron_it->value = neuron_sum;
+					break;
+				case FANN_LINEAR_PIECE:
+					neuron_it->value = (fann_type)((neuron_sum < 0) ? 0 : (neuron_sum > multiplier) ? multiplier : neuron_sum);
+					break;
+				case FANN_LINEAR_PIECE_SYMMETRIC:
+					neuron_it->value = (fann_type)((neuron_sum < -multiplier) ? -multiplier : (neuron_sum > multiplier) ? multiplier : neuron_sum);
 					break;
 				case FANN_ELLIOT:
+				case FANN_ELLIOT_SYMMETRIC:
+				case FANN_GAUSSIAN:
+				case FANN_GAUSSIAN_SYMMETRIC:
+				case FANN_GAUSSIAN_STEPWISE:
+				case FANN_SIN_SYMMETRIC:
+				case FANN_COS_SYMMETRIC:
 					fann_error((struct fann_error *) ann, FANN_E_CANT_USE_ACTIVATION);
+					break;
 			}
 			last_steepness = steepness;
 			last_activation_function = activation_function;
@@ -741,7 +762,7 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 			
 			neuron_it->sum = neuron_sum;
 
-			fann_activation_switch(ann, activation_function, neuron_sum, neuron_it->value);
+			fann_activation_switch(activation_function, neuron_sum, neuron_it->value);
 #endif
 		}
 	}
@@ -774,6 +795,19 @@ FANN_EXTERNAL void FANN_API fann_destroy(struct fann *ann)
 	fann_safe_free(ann->errstr);
 	fann_safe_free(ann->cascade_activation_functions);
 	fann_safe_free(ann->cascade_activation_steepnesses);
+	
+#ifndef FIXEDFANN
+	fann_safe_free( ann->scale_mean_in );
+	fann_safe_free( ann->scale_deviation_in );
+	fann_safe_free( ann->scale_new_min_in );
+	fann_safe_free( ann->scale_factor_in );
+
+	fann_safe_free( ann->scale_mean_out );
+	fann_safe_free( ann->scale_deviation_out );
+	fann_safe_free( ann->scale_new_min_out );
+	fann_safe_free( ann->scale_factor_out );
+#endif
+	
 	fann_safe_free(ann);
 }
 
@@ -838,7 +872,7 @@ FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 #endif
 					if(value < -25)
 						value = -25;
-					neurons[ann->connections[i] - ann->first_layer->first_neuron] = 'a' - value;
+					neurons[ann->connections[i] - ann->first_layer->first_neuron] = (char)('a' - value);
 				}
 				else
 				{
@@ -849,7 +883,7 @@ FANN_EXTERNAL void FANN_API fann_print_connections(struct fann *ann)
 #endif
 					if(value > 25)
 						value = 25;
-					neurons[ann->connections[i] - ann->first_layer->first_neuron] = 'A' + value;
+					neurons[ann->connections[i] - ann->first_layer->first_neuron] = (char)('A' + value);
 				}
 			}
 			printf("L %3d / N %4d %s\n", layer_it - ann->first_layer,
@@ -902,7 +936,7 @@ FANN_EXTERNAL void FANN_API fann_init_weights(struct fann *ann, struct fann_trai
 	{
 		last_neuron = layer_it->last_neuron;
 
-		if(!ann->shortcut_connections)
+		if(ann->network_type == FANN_NETTYPE_LAYER)
 		{
 			bias_neuron = (layer_it - 1)->last_neuron - 1;
 		}
@@ -951,7 +985,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Input layer                          :%4d neurons, 1 bias\n", ann->num_input);
 	for(layer_it = ann->first_layer + 1; layer_it != ann->last_layer - 1; layer_it++)
 	{
-		if(ann->shortcut_connections)
+		if(ann->network_type == FANN_NETTYPE_SHORTCUT)
 		{
 			printf("  Hidden layer                       :%4d neurons, 0 bias\n",
 				   layer_it->last_neuron - layer_it->first_neuron);
@@ -966,7 +1000,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 	printf("Total neurons and biases             :%4d\n", fann_get_total_neurons(ann));
 	printf("Total connections                    :%4d\n", ann->total_connections);
 	printf("Connection rate                      :%8.3f\n", ann->connection_rate);
-	printf("Shortcut connections                 :%4d\n", ann->shortcut_connections);
+	printf("Network type                         :   %s\n", FANN_NETTYPE_NAMES[ann->network_type]);
 #ifdef FIXEDFANN
 	printf("Decimal point                        :%4d\n", ann->decimal_point);
 	printf("Multiplier                           :%4d\n", ann->multiplier);
@@ -978,6 +1012,7 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 #ifdef FIXEDFANN
 	printf("Bit fail limit                       :%4d\n", ann->bit_fail_limit);
 #else
+	printf("Bit fail limit                       :%8.3f\n", ann->bit_fail_limit);
 	printf("Learning rate                        :%8.3f\n", ann->learning_rate);
 	printf("Learning momentum                    :%8.3f\n", ann->learning_momentum);
 	printf("Quickprop decay                      :%11.6f\n", ann->quickprop_decay);
@@ -1003,6 +1038,8 @@ FANN_EXTERNAL void FANN_API fann_print_parameters(struct fann *ann)
 		
 	printf("Cascade candidate groups             :%4d\n", ann->cascade_num_candidate_groups);
 	printf("Cascade no. of candidates            :%4d\n", fann_get_cascade_num_candidates(ann));
+	
+	/* TODO: dump scale parameters */
 #endif
 }
 
@@ -1011,7 +1048,7 @@ FANN_GET(unsigned int, num_output)
 
 FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 {
-	if(ann->shortcut_connections)
+	if(ann->network_type)
 	{
 		return ann->total_neurons;
 	}
@@ -1023,6 +1060,167 @@ FANN_EXTERNAL unsigned int FANN_API fann_get_total_neurons(struct fann *ann)
 }
 
 FANN_GET(unsigned int, total_connections)
+
+FANN_EXTERNAL enum fann_nettype_enum FANN_API fann_get_network_type(struct fann *ann)
+{
+    /* Currently two types: LAYER = 0, SHORTCUT = 1 */
+    /* Enum network_types must be set to match the return values  */
+    return ann->network_type;
+}
+
+FANN_EXTERNAL float FANN_API fann_get_connection_rate(struct fann *ann)
+{
+    return ann->connection_rate;
+}
+
+FANN_EXTERNAL unsigned int FANN_API fann_get_num_layers(struct fann *ann)
+{
+    return ann->last_layer - ann->first_layer;
+}
+
+FANN_EXTERNAL void FANN_API fann_get_layer_array(struct fann *ann, unsigned int *layers)
+{
+    struct fann_layer *layer_it;
+
+    for (layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++) {
+        unsigned int count = layer_it->last_neuron - layer_it->first_neuron;
+        /* Remove the bias from the count of neurons. */
+        switch (fann_get_network_type(ann)) {
+            case FANN_NETTYPE_LAYER: {
+                --count;
+                break;
+            }
+            case FANN_NETTYPE_SHORTCUT: {
+                /* The bias in the first layer is reused for all layers */
+                if (layer_it == ann->first_layer)
+                    --count;
+                break;
+            }
+            default: {
+                /* Unknown network type, assume no bias present  */
+                break;
+            }
+        }
+        *layers++ = count;
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_get_bias_array(struct fann *ann, unsigned int *bias)
+{
+    struct fann_layer *layer_it;
+
+    for (layer_it = ann->first_layer; layer_it != ann->last_layer; ++layer_it, ++bias) {
+        switch (fann_get_network_type(ann)) {
+            case FANN_NETTYPE_LAYER: {
+                /* Report one bias in each layer except the last */
+                if (layer_it != ann->last_layer-1)
+                    *bias = 1;
+                else
+                    *bias = 0;
+                break;
+            }
+            case FANN_NETTYPE_SHORTCUT: {
+                /* The bias in the first layer is reused for all layers */
+                if (layer_it == ann->first_layer)
+                    *bias = 1;
+                else
+                    *bias = 0;
+                break;
+            }
+            default: {
+                /* Unknown network type, assume no bias present  */
+                *bias = 0;
+                break;
+            }
+        }
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_get_connection_array(struct fann *ann, struct fann_connection *connections)
+{
+    struct fann_neuron *first_neuron;
+    struct fann_layer *layer_it;
+    struct fann_neuron *neuron_it;
+    unsigned int index;
+    unsigned int source_index;
+    unsigned int destination_index;
+
+    first_neuron = ann->first_layer->first_neuron;
+
+    source_index = 0;
+    destination_index = 0;
+    
+    /* The following assumes that the last unused bias has no connections */
+
+    /* for each layer */
+    for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
+        /* for each neuron */
+        for(neuron_it = layer_it->first_neuron; neuron_it != layer_it->last_neuron; neuron_it++){
+            /* for each connection */
+            for (index = neuron_it->first_con; index < neuron_it->last_con; index++){
+                /* Assign the source, destination and weight */
+                connections->from_neuron = ann->connections[source_index] - first_neuron;
+                connections->to_neuron = destination_index;
+                connections->weight = ann->weights[source_index];
+
+                connections++;
+                source_index++;
+            }
+            destination_index++;
+        }
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_set_weight_array(struct fann *ann,
+    struct fann_connection *connections, unsigned int num_connections)
+{
+    unsigned int index;
+
+    for (index = 0; index < num_connections; index++) {
+        fann_set_weight(ann, connections[index].from_neuron,
+            connections[index].to_neuron, connections[index].weight);
+    }
+}
+
+FANN_EXTERNAL void FANN_API fann_set_weight(struct fann *ann,
+    unsigned int from_neuron, unsigned int to_neuron, fann_type weight)
+{
+    struct fann_neuron *first_neuron;
+    struct fann_layer *layer_it;
+    struct fann_neuron *neuron_it;
+    unsigned int index;
+    unsigned int source_index;
+    unsigned int destination_index;
+
+    first_neuron = ann->first_layer->first_neuron;
+
+    source_index = 0;
+    destination_index = 0;
+
+    /* Find the connection, simple brute force search through the network
+       for one or more connections that match to minimize datastructure dependencies.
+       Nothing is done if the connection does not already exist in the network. */
+
+    /* for each layer */
+    for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++){
+        /* for each neuron */
+        for(neuron_it = layer_it->first_neuron; neuron_it != layer_it->last_neuron; neuron_it++){
+            /* for each connection */
+            for (index = neuron_it->first_con; index < neuron_it->last_con; index++){
+                /* If the source and destination neurons match, assign the weight */
+                if (((int)from_neuron == ann->connections[source_index] - first_neuron) &&
+                    (to_neuron == destination_index))
+                {
+                    ann->weights[source_index] = weight;
+                }
+                source_index++;
+            }
+            destination_index++;
+        }
+    }
+}
+
+FANN_GET_SET(void *, user_data)
 
 #ifdef FIXEDFANN
 
@@ -1120,11 +1318,25 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->MSE_value = 0;
 	ann->num_bit_fail = 0;
 	ann->bit_fail_limit = (fann_type)0.35;
-	ann->shortcut_connections = 0;
+	ann->network_type = FANN_NETTYPE_LAYER;
 	ann->train_error_function = FANN_ERRORFUNC_TANH;
 	ann->train_stop_function = FANN_STOPFUNC_MSE;
 	ann->callback = NULL;
-
+    ann->user_data = NULL; /* User is responsible for deallocation */
+	ann->weights = NULL;
+	ann->connections = NULL;
+	ann->output = NULL;
+#ifndef FIXEDFANN
+	ann->scale_mean_in = NULL;
+	ann->scale_deviation_in = NULL;
+	ann->scale_new_min_in = NULL;
+	ann->scale_factor_in = NULL;
+	ann->scale_mean_out = NULL;
+	ann->scale_deviation_out = NULL;
+	ann->scale_new_min_out = NULL;
+	ann->scale_factor_out = NULL;
+#endif	
+	
 	/* variables used for cascade correlation (reasonable defaults) */
 	ann->cascade_output_change_fraction = 0.01f;
 	ann->cascade_candidate_change_fraction = 0.01f;
@@ -1136,7 +1348,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->cascade_max_out_epochs = 150;
 	ann->cascade_max_cand_epochs = 150;
 	ann->cascade_candidate_scores = NULL;
-	ann->cascade_activation_functions_count = 6;
+	ann->cascade_activation_functions_count = 10;
 	ann->cascade_activation_functions = 
 		(enum fann_activationfunc_enum *)calloc(ann->cascade_activation_functions_count, 
 							   sizeof(enum fann_activationfunc_enum));
@@ -1153,12 +1365,16 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->cascade_activation_functions[3] = FANN_GAUSSIAN_SYMMETRIC;
 	ann->cascade_activation_functions[4] = FANN_ELLIOT;
 	ann->cascade_activation_functions[5] = FANN_ELLIOT_SYMMETRIC;
+	ann->cascade_activation_functions[6] = FANN_SIN_SYMMETRIC;
+	ann->cascade_activation_functions[7] = FANN_COS_SYMMETRIC;
+	ann->cascade_activation_functions[8] = FANN_SIN;
+	ann->cascade_activation_functions[9] = FANN_COS;
 
 	ann->cascade_activation_steepnesses_count = 4;
 	ann->cascade_activation_steepnesses = 
 		(fann_type *)calloc(ann->cascade_activation_steepnesses_count, 
 							   sizeof(fann_type));
-	if(ann->cascade_activation_functions == NULL)
+	if(ann->cascade_activation_steepnesses == NULL)
 	{
 		fann_safe_free(ann->cascade_activation_functions);
 		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
@@ -1180,7 +1396,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->rprop_decrease_factor = 0.5;
 	ann->rprop_delta_min = 0.0;
 	ann->rprop_delta_max = 50.0;
-	ann->rprop_delta_zero = 0.5;
+	ann->rprop_delta_zero = 0.1;
 	
 	fann_init_error_data((struct fann_error *) ann);
 
@@ -1203,6 +1419,42 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 	ann->last_layer = ann->first_layer + num_layers;
 
 	return ann;
+}
+
+/* INTERNAL FUNCTION
+   Allocates room for the scaling parameters.
+ */
+int fann_allocate_scale(struct fann *ann)
+{
+	/* todo this should only be allocated when needed */
+#ifndef FIXEDFANN
+	unsigned int i = 0;
+#define SCALE_ALLOCATE( what, where, default_value )		    			\
+		ann->what##_##where = (float *)calloc(								\
+			ann->num_##where##put,											\
+			sizeof( float )													\
+			);																\
+		if( ann->what##_##where == NULL )									\
+		{																	\
+			fann_error( NULL, FANN_E_CANT_ALLOCATE_MEM );					\
+			fann_destroy( ann );                            				\
+			return 1;														\
+		}																	\
+		for( i = 0; i < ann->num_##where##put; i++ )						\
+			ann->what##_##where[ i ] = ( default_value );
+
+	SCALE_ALLOCATE( scale_mean,		in,		0.0 )
+	SCALE_ALLOCATE( scale_deviation,	in,		1.0 )
+	SCALE_ALLOCATE( scale_new_min,	in,		-1.0 )
+	SCALE_ALLOCATE( scale_factor,		in,		1.0 )
+
+	SCALE_ALLOCATE( scale_mean,		out,	0.0 )
+	SCALE_ALLOCATE( scale_deviation,	out,	1.0 )
+	SCALE_ALLOCATE( scale_new_min,	out,	-1.0 )
+	SCALE_ALLOCATE( scale_factor,		out,	1.0 )
+#undef SCALE_ALLOCATE
+#endif	
+	return 0;
 }
 
 /* INTERNAL FUNCTION

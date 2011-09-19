@@ -171,6 +171,9 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 	case FANN_E_INDEX_OUT_OF_BOUND:
 		vsprintf(errstr, "Index %d is out of bound.\n", ap);
 		break;
+	case FANN_E_SCALE_NOT_PRESENT: 
+		sprintf(errstr, "Scaling parameters not present.\n");
+		break;
 	}
 	va_end(ap);
 
@@ -178,7 +181,6 @@ void fann_error(struct fann_error *errdat, const enum fann_errno_enum errno_f, .
 	{
 		errdat->errstr = errstr;
 		error_log = errdat->error_log;
-		printf("setting errorlog\n");		
 	}
 
 	if(error_log == (FILE *)-1) /* This is the default behavior and will give stderr */

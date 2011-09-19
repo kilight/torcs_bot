@@ -177,7 +177,7 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 	fprintf(conf, "num_layers=%u\n", ann->last_layer - ann->first_layer);
 	fprintf(conf, "learning_rate=%f\n", ann->learning_rate);
 	fprintf(conf, "connection_rate=%f\n", ann->connection_rate);
-	fprintf(conf, "shortcut_connections=%u\n", ann->shortcut_connections);
+	fprintf(conf, "network_type=%u\n", ann->network_type);
 	
 	fprintf(conf, "learning_momentum=%f\n", ann->learning_momentum);
 	fprintf(conf, "training_algorithm=%u\n", ann->training_algorithm);
@@ -240,7 +240,36 @@ int fann_save_internal_fd(struct fann *ann, FILE * conf, const char *configurati
 	}
 	fprintf(conf, "\n");
 
+#ifndef FIXEDFANN
+	/* 2.1 */
+	#define SCALE_SAVE( what, where )										\
+		fprintf( conf, #what "_" #where "=" );								\
+		for( i = 0; i < ann->num_##where##put; i++ )						\
+			fprintf( conf, "%f ", ann->what##_##where[ i ] );				\
+		fprintf( conf, "\n" );
 
+	if(!save_as_fixed)
+	{
+		if(ann->scale_mean_in != NULL)
+		{
+			fprintf(conf, "scale_included=1\n");
+			SCALE_SAVE( scale_mean,			in )
+			SCALE_SAVE( scale_deviation,	in )
+			SCALE_SAVE( scale_new_min,		in )
+			SCALE_SAVE( scale_factor,		in )
+		
+			SCALE_SAVE( scale_mean,			out )
+			SCALE_SAVE( scale_deviation,	out )
+			SCALE_SAVE( scale_new_min,		out )
+			SCALE_SAVE( scale_factor,		out )
+		}
+		else
+			fprintf(conf, "scale_included=0\n");
+	}
+#undef SCALE_SAVE
+#endif	
+
+	/* 2.0 */
 	fprintf(conf, "neurons (num_inputs, activation_function, activation_steepness)=");
 	for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++)
 	{
@@ -325,9 +354,10 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 {
 	unsigned int num_layers, layer_size, input_neuron, i, num_connections;
-
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
+#else
+	unsigned int scale_included;
 #endif
 	struct fann_neuron *first_neuron, *neuron_it, *last_neuron, **connected_neurons;
 	fann_type *weights;
@@ -359,10 +389,20 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 			return fann_create_from_fd_1_1(conf, configuration_file);
 		}
 
-		free(read_version);
-		fann_error(NULL, FANN_E_WRONG_CONFIG_VERSION, configuration_file);
+#ifndef FIXEDFANN
+		/* Maintain compatibility with 2.0 version that doesnt have scale parameters. */
+		if(strncmp(read_version, "FANN_FLO_2.0\n", strlen("FANN_FLO_2.0\n")) != 0 &&
+		   strncmp(read_version, "FANN_FLO_2.1\n", strlen("FANN_FLO_2.1\n")) != 0)
+#else
+		if(strncmp(read_version, "FANN_FIX_2.0\n", strlen("FANN_FIX_2.0\n")) != 0 &&
+		   strncmp(read_version, "FANN_FIX_2.1\n", strlen("FANN_FIX_2.1\n")) != 0)
+#endif
+		{
+			free(read_version);
+			fann_error(NULL, FANN_E_WRONG_CONFIG_VERSION, configuration_file);
 
-		return NULL;
+			return NULL;
+		}
 	}
 
 	free(read_version);
@@ -382,7 +422,7 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 
     fann_scanf("%f", "learning_rate", &ann->learning_rate);
     fann_scanf("%f", "connection_rate", &ann->connection_rate);
-    fann_scanf("%u", "shortcut_connections", &ann->shortcut_connections);
+    fann_scanf("%u", "network_type", (unsigned int *)&ann->network_type);
 	fann_scanf("%f", "learning_momentum", &ann->learning_momentum);
 	fann_scanf("%u", "training_algorithm", (unsigned int *)&ann->training_algorithm);
 	fann_scanf("%u", "train_error_function", (unsigned int *)&ann->train_error_function);
@@ -471,7 +511,7 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 		layer_it->last_neuron = layer_it->first_neuron + layer_size;
 		ann->total_neurons += layer_size;
 #ifdef DEBUG
-		if(ann->shortcut_connections && layer_it != ann->first_layer)
+		if(ann->network_type == FANN_NETTYPE_SHORTCUT && layer_it != ann->first_layer)
 		{
 			printf("  layer       : %d neurons, 0 bias\n", layer_size);
 		}
@@ -484,12 +524,41 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
 
 	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1;
 	ann->num_output = ((ann->last_layer - 1)->last_neuron - (ann->last_layer - 1)->first_neuron);
-	if(!ann->shortcut_connections)
+	if(ann->network_type == FANN_NETTYPE_LAYER)
 	{
 		/* one too many (bias) in the output layer */
 		ann->num_output--;
 	}
 
+#ifndef FIXEDFANN
+#define SCALE_LOAD( what, where )											\
+	fscanf( conf, #what "_" #where "=" );									\
+	for(i = 0; i < ann->num_##where##put; i++)								\
+	{																		\
+		if(fscanf( conf, "%f ", (float *)&ann->what##_##where[ i ] ) != 1)  \
+		{																	\
+			fann_error((struct fann_error *) ann, FANN_E_CANT_READ_CONFIG, #what "_" #where, configuration_file); \
+			fann_destroy(ann); 												\
+			return NULL;													\
+		}																	\
+	}
+	
+	if(fscanf(conf, "scale_included=%u\n", &scale_included) == 1 && scale_included == 1)
+	{
+		fann_allocate_scale(ann);
+		SCALE_LOAD( scale_mean,			in )
+		SCALE_LOAD( scale_deviation,	in )
+		SCALE_LOAD( scale_new_min,		in )
+		SCALE_LOAD( scale_factor,		in )
+	
+		SCALE_LOAD( scale_mean,			out )
+		SCALE_LOAD( scale_deviation,	out )
+		SCALE_LOAD( scale_new_min,		out )
+		SCALE_LOAD( scale_factor,		out )
+	}
+#undef SCALE_LOAD
+#endif
+	
 	/* allocate room for the actual neurons */
 	fann_allocate_neurons(ann);
 	if(ann->errno_f == FANN_E_CANT_ALLOCATE_MEM)
@@ -550,7 +619,7 @@ struct fann *fann_create_from_fd(FILE * conf, const char *configuration_file)
  */
 struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file)
 {
-	unsigned int num_layers, layer_size, input_neuron, i, shortcut_connections, num_connections;
+	unsigned int num_layers, layer_size, input_neuron, i, network_type, num_connections;
 	unsigned int activation_function_hidden, activation_function_output;
 #ifdef FIXEDFANN
 	unsigned int decimal_point, multiplier;
@@ -572,7 +641,7 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 #endif
 
 	if(fscanf(conf, "%u %f %f %u %u %u " FANNSCANF " " FANNSCANF "\n", &num_layers, &learning_rate,
-		&connection_rate, &shortcut_connections, &activation_function_hidden,
+		&connection_rate, &network_type, &activation_function_hidden,
 		&activation_function_output, &activation_steepness_hidden,
 		&activation_steepness_output) != 8)
 	{
@@ -586,7 +655,7 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 		return NULL;
 	}
 	ann->connection_rate = connection_rate;
-	ann->shortcut_connections = shortcut_connections;
+	ann->network_type = (enum fann_nettype_enum)network_type;
 	ann->learning_rate = learning_rate;
 
 #ifdef FIXEDFANN
@@ -618,7 +687,7 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 		layer_it->last_neuron = layer_it->first_neuron + layer_size;
 		ann->total_neurons += layer_size;
 #ifdef DEBUG
-		if(ann->shortcut_connections && layer_it != ann->first_layer)
+		if(ann->network_type == FANN_NETTYPE_SHORTCUT && layer_it != ann->first_layer)
 		{
 			printf("  layer       : %d neurons, 0 bias\n", layer_size);
 		}
@@ -631,7 +700,7 @@ struct fann *fann_create_from_fd_1_1(FILE * conf, const char *configuration_file
 
 	ann->num_input = ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1;
 	ann->num_output = ((ann->last_layer - 1)->last_neuron - (ann->last_layer - 1)->first_neuron);
-	if(!ann->shortcut_connections)
+	if(ann->network_type == FANN_NETTYPE_LAYER)
 	{
 		/* one too many (bias) in the output layer */
 		ann->num_output--;

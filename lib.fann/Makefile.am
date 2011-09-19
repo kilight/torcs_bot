@@ -1,13 +1,1 @@
-SUBDIRS = include
-
-lib_LTLIBRARIES = libfloatfann.la libdoublefann.la libfixedfann.la libfann.la
-
-AM_LDFLAGS = -version-info 2:0:0
-AM_CFLAGS = -D_REENTRANT
-
-libfloatfann_la_SOURCES = floatfann.c
-libdoublefann_la_SOURCES = doublefann.c
-libfixedfann_la_SOURCES = fixedfann.c
-libfann_la_SOURCES = floatfann.c
-
-EXTRA_DIST = fann.c fann_io.c fann_train.c fann_train_data.c fann_error.c fann_cascade.c
+include_HEADERS = fann.h doublefann.h fann_internal.h floatfann.h fann_data.h fixedfann.h compat_time.h fann_activation.h fann_cascade.h fann_error.h fann_train.h fann_io.h
