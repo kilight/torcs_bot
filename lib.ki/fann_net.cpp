@@ -35,7 +35,7 @@ void fann_net::menu() {
 void fann_net::setNetParameters(float learning_rate, unsigned int num_layers, unsigned int num_input, 
 		unsigned int num_hidden, unsigned int num_output, float desired_error, 
 		unsigned int max_iterations, unsigned int iterations_between_reports) {
-	this->learning_rate = learning_rat;
+	this->learning_rate = learning_rate;
 	this->num_layers = num_layers;
 	this->num_input = num_input;
 	this->num_hidden = num_hidden;
