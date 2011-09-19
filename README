@@ -1,1 +1,1 @@
- g++ -O3 -ggdb -DDEBUG -Wall -Wformat-security -Wfloat-equal -Wpointer-arith -Wcast-qual -Wsign-compare -pedantic -ansi -I../lib.fann/ -I./lib.fann/include/ ./lib.fann/floatfann.c ./lib.ki/*.cpp *.cpp ./lib.db/*.cpp -o test2 -lm 
+g++ -o test ./lib.fann/floatfann.c ./lib.ki/*.cpp *.cpp ./lib.db/*.cpp 
