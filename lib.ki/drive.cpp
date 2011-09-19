@@ -5,7 +5,11 @@
 
 /***  class drive_object  ****
 *****************************/
-drive_object::drive_object(){}	
+drive_object::drive_object(){
+	net.destroy();
+	net.create_from_file("torcs.net");
+}
+	
 drive_object::drive_object(db* database)
 {
 	this->database=database;
