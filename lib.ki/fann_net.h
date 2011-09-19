@@ -34,6 +34,9 @@ public:
 	}
 
 	fann_type* run(fann_type* input) { return net.run(input); }
+	void destroy() { net.destroy(); }
+	bool create_from_file(const std::string& configuration_file) { return net.create_from_file(configuration_file); }
+
 
 	void inputTraindata(fann_type** input, fann_type** output);
 
