@@ -23,7 +23,12 @@ drive_object::drive_object(db* database)
 
 			net.setNumData((*database->getLaps())[i][j].getNumPoints());
 			net.setNumInput(23);
-			net.setNumOut(3);			
+			net.setNumOut(3);
+
+			fann_type** output = new fann_type*[net.getNumData()];
+			fann_type** input = new fann_type*[net.getNumData()];			
+			fann_type* inputvec;
+			fann_type* outputvec;
 
 			for(int k=0;k<(*database->getLaps())[i][j].getNumPoints();k++)
 			{
@@ -33,24 +38,33 @@ drive_object::drive_object(db* database)
 				// da es ein Vektor ist geht hier [] aber wegen Zeiger => (* ... )
 				tmp=(*(*database->getLaps())[i][j].getData())[k];
 
-				fann_type* input = new fann_type[23];
-				fann_type* output = new fann_type[3];
+				inputvec = new fann_type[23];
+				outputvec = new fann_type[3];
 
-				input[0]=(float) tmp->getAngle();
-				input[1]=(float) tmp->getSpeedX();
-				input[2]=(float) tmp->getSpeedY();
-				input[3]=(float) tmp->getTrackPos();
-				for(int i=0;i<19;i++){input[i+4]=(float) tmp->getTrack(i);}
+				inputvec[0]=(float) tmp->getAngle();
+				inputvec[1]=(float) tmp->getSpeedX();
+				inputvec[2]=(float) tmp->getSpeedY();
+				inputvec[3]=(float) tmp->getTrackPos();
+				for(int i=0;i<19;i++){inputvec[i+4]=(float) tmp->getTrack(i);}
 
-				output[0]=(float) tmp->getAccel();
-				output[1]=(float) tmp->getBrake();
-				output[2]=(float) tmp->getSteer();
-
-				net.saveInputFieldVector(input);
-				net.saveOutputFieldVector(output);
+				outputvec[0]=(float) tmp->getAccel();
+				outputvec[1]=(float) tmp->getBrake();
+				outputvec[2]=(float) tmp->getSteer();
+				// cout << "data vector " << k << "are put in the training data now" << endl;
+				//net.saveInputFieldVector(input);
+				//net.saveOutputFieldVector(output);
+				input[k] = inputvec;
+				output[k] = outputvec;
 			}
-			net.inputTraindata();
+			cout << "lap complete" << endl;
+			net.inputTraindata(input, output);
 			net.train();
+			for(int i = 0; i < (*database->getLaps())[i][j].getNumPoints(); i++) {
+				delete input[i];
+				delete output[i];
+			}
+			delete input;
+			delete output;
 		}
 	}
 }

@@ -86,6 +86,7 @@
 
 #include <stdarg.h>
 #include <string>
+#include <stdio.h>
 
 /* Namespace: FANN
     The FANN namespace groups the C++ wrapper definitions */
@@ -381,6 +382,7 @@ namespace FANN
             }
         }
 
+
         /* Destructor: ~training_data
 
             Provides automatic cleanup of data.
@@ -663,22 +665,33 @@ namespace FANN
             data->num_output = num_output;
 
         	fann_type *data_input = (fann_type *)calloc(num_input*num_data, sizeof(fann_type));
+		if(data_input == NULL) {
+			printf("not enough memory available for data input\n");
+			throw "memory alloc error";
+		}
         	fann_type *data_output = (fann_type *)calloc(num_output*num_data, sizeof(fann_type));
+		if(data_output == NULL) {
+			printf("not enough memory available for data output\n");
+			throw "memory alloc error";
+		}
 
             for (unsigned int i = 0; i < num_data; ++i)
             {
                 data->input[i] = data_input;
                 data_input += num_input;
+		
                 for (unsigned int j = 0; j < num_input; ++j)
                 {
                     data->input[i][j] = input[i][j];
                 }
+//		printf("inserted input %d\n", i);
                 data->output[i] = data_output;
-		        data_output += num_output;
+		data_output += num_output;
                 for (unsigned int j = 0; j < num_output; ++j)
                 {
                     data->output[i][j] = output[i][j];
                 }
+//		printf("inserted output %d\n", i);
             }
             set_train_data(data);
         }
@@ -914,7 +927,7 @@ public:
 	        This function appears in FANN >= 2.0.0.
         */ 
         bool create_standard(unsigned int num_layers, ...)
-        {
+	{
 		va_list layers;
 		va_start(layers, num_layers);
 		unsigned int lay[num_layers];
@@ -922,7 +935,7 @@ public:
 		bool status = create_standard_array(num_layers,lay);
 		va_end(layers);
 		return status;
-        }
+	}
 
         /* Method: create_standard_array
 

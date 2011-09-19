@@ -21,7 +21,20 @@ public:
 	void inputTraindata();
 	void generateNet();
 	void train();
-	void setNumData(int numData) { this->numData = numData; }
+	void setNumData(int numData) { 
+		this->numData = numData;
+		if(output != NULL) {
+			delete output;
+		}		
+		output = new fann_type*[numData];
+		if(input != NULL) {
+			delete input;
+		}		
+		input = new fann_type*[numData];
+	}
+
+	void inputTraindata(fann_type** input, fann_type** output);
+
 	int getNumData() { return this->numData; }
 
 	void setNumInput(int numIn) { this->numIn = numIn; }
@@ -33,6 +46,7 @@ public:
 	void setNetParameters(float learning_rate, unsigned int num_layers, unsigned int num_input, 
 		unsigned int num_hidden, unsigned int num_output, float desired_error, 
 		unsigned int max_iterations, unsigned int iterations_between_reports);
+	void testData();
 
 private:
 	fann_type** input;

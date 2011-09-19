@@ -50,7 +50,7 @@ void fann_net::setNetParameters(float learning_rate, unsigned int num_layers, un
 } */
 
 void fann_net::saveInputFieldVector(fann_type* data) {
-	if(insertedIn <= numData) {	
+	if(insertedIn < numData) {	
 		input[insertedIn] = data;
 		insertedIn++;
 	}
@@ -59,7 +59,7 @@ void fann_net::saveInputFieldVector(fann_type* data) {
 }
 
 void fann_net::saveOutputFieldVector(fann_type* data) {
-	if(insertedOut <= numData) {	
+	if(insertedOut < numData) {	
 		input[insertedOut] = data;
 		insertedOut++;
 	}
@@ -68,11 +68,29 @@ void fann_net::saveOutputFieldVector(fann_type* data) {
 }
 
 void fann_net::inputTraindata() {
+	insertedIn = 0;
+	insertedOut = 0;
 	data.set_train_data(numData, numIn, input, numOut, output);
+	cout << "data put in train data" << endl;
 	for(int i = 0; i < numData; i++) {
 			delete input[i];
 			delete output[i];
-	}	
+	}
+	delete input;
+	delete output;	
+}
+
+void fann_net::inputTraindata(fann_type** input, fann_type** output) {
+	insertedIn = 0;
+	insertedOut = 0;
+	data.set_train_data(numData, numIn, input, numOut, output);
+	cout << "data put in train data" << endl;
+	for(int i = 0; i < numData; i++) {
+			delete input[i];
+			delete output[i];
+	}
+	delete input;
+	delete output;	
 }
 
 void fann_net::generateNet() {
@@ -115,4 +133,20 @@ void fann_net::train() {
         // Save the network in floating point and fixed point
         net.save("torcs.net");
         unsigned int decimal_point = net.save_to_fixed("torcs_fixed.net");
+}
+
+void fann_net::testData() {
+	cout << "starting data test" << endl;
+	for(int i = 0; i < numData; i++) {
+		for(int j = 0; j < numIn; j++) {
+			cout << input[i][j];
+		}
+//		cout << endl;
+		for(int j = 0; j < numOut; j++) {
+			cout << output[i][j];
+		}
+		cout << " " << i << endl;
+//		cout << endl;
+	}
+	cout << "test done" << endl;
 }
