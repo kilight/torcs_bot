@@ -16,13 +16,15 @@ drive_object::drive_object(db* database)
 	net.generateNet();
 
 	// alle tracks laden
+	//for(int i=0;i<database->getTracks()->size();i++)
 	for(int i=0;i<1;i++)
 	{                
 		// rundenbetrachtung
 		// das (* .... )[] braucht man, da die Funktion getLaps() einem einen Zeiger auf einen Array zurückliefert
 		// die -1 am Ende ist wegen dem Start bei 0
 
-                for(int j=0;j<10;j++)
+                //for(int j=0;j<(*database->getLaps())[i].size();j++)
+		for(int j=0;j<10;j++)
 		{
 
 			net.setNumData((*database->getLaps())[i][j].getNumPoints());
