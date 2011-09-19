@@ -67,8 +67,10 @@ CarControl SimpleDriver::wDrive(CarState cs)
 		}
 
 
-        	clutching(cs,clutch);						// Calculate clutching	
-        	CarControl cc(accel,brake,shift.race(cs),steer,clutch);	// build a CarControl variable and return it
+        	clutching(cs,clutch);					// Calculate clutching
+		driver.race(cs);	
+        	CarControl cc(driver.getAccel(),driver.getBrake(),shift.race(cs),driver.getSteer(),clutch);	
+		// build a CarControl variable and return it
         	return cc;
 	}
 }

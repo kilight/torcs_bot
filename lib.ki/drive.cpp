@@ -18,11 +18,11 @@ drive_object::drive_object(db* database)
 		// das (* .... )[] braucht man, da die Funktion getLaps() einem einen Zeiger auf einen Array zurückliefert
 		// die -1 am Ende ist wegen dem Start bei 0
 
-                for(int j=0;j<10;j++)
+                for(int j=0;j<1;j++)
 		{
 
 			net.setNumData((*database->getLaps())[i][j].getNumPoints());
-			net.setNumInput(23);
+			net.setNumInput(4);
 			net.setNumOut(3);
 
 			fann_type** output = new fann_type*[net.getNumData()];
@@ -38,14 +38,14 @@ drive_object::drive_object(db* database)
 				// da es ein Vektor ist geht hier [] aber wegen Zeiger => (* ... )
 				tmp=(*(*database->getLaps())[i][j].getData())[k];
 
-				inputvec = new fann_type[23];
+				inputvec = new fann_type[4];
 				outputvec = new fann_type[3];
 
 				inputvec[0]=(float) tmp->getAngle();
 				inputvec[1]=(float) tmp->getSpeedX();
 				inputvec[2]=(float) tmp->getSpeedY();
 				inputvec[3]=(float) tmp->getTrackPos();
-				for(int i=0;i<19;i++){inputvec[i+4]=(float) tmp->getTrack(i);}
+				// for(int i=0;i<19;i++){inputvec[i+4]=(float) tmp->getTrack(i);}
 
 				outputvec[0]=(float) tmp->getAccel();
 				outputvec[1]=(float) tmp->getBrake();
@@ -57,7 +57,7 @@ drive_object::drive_object(db* database)
 				output[k] = outputvec;
 			}
 			cout << "lap complete" << endl;
-			net.inputTraindata(input, output);
+			net.inputTraindata(input,output);
 			net.train();
 			for(int i = 0; i < (*database->getLaps())[i][j].getNumPoints(); i++) {
 				delete input[i];
@@ -68,4 +68,17 @@ drive_object::drive_object(db* database)
 		}
 	}
 }
-drive_object::~drive_object(){}
+drive_object::~drive_object()
+{
+	
+	
+	
+}
+
+float drive_object::getAccel(){return accel;}
+float drive_object::getBrake(){return brake;}
+float drive_object::getSteer(){return steer;}
+
+
+
+int race(CarState &cs);		// common racing interface

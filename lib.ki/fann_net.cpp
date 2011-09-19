@@ -19,7 +19,7 @@ fann_net::fann_net() {
 	num_input = 2;
 	num_hidden = 3;
 	num_output = 1;
-	desired_error = 0.001f;
+	desired_error = 0.06f;
 	max_iterations = 300000;
 	iterations_between_reports = 1000;
 }

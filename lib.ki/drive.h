@@ -19,12 +19,20 @@ using namespace std;
 class drive_object
 {
 private:	db* database;
-		fann_net net;	
+		fann_net net;
+
+		float accel;
+		float brake;
+		float steer;	
 		
 public:		 drive_object();		// race constructor
 		 drive_object(db* database);	// learn constructor
 		~drive_object();
 
 		int race(CarState &cs);		// common racing interface
+
+		float getAccel(){return accel;}
+		float getBrake(){return brake;}
+		float getSteer(){return steer;}
 };
 #endif
