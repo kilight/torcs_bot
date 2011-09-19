@@ -22,7 +22,7 @@ drive_object::drive_object(db* database)
 		// das (* .... )[] braucht man, da die Funktion getLaps() einem einen Zeiger auf einen Array zurückliefert
 		// die -1 am Ende ist wegen dem Start bei 0
 
-                for(int j=0;j<1;j++)
+                for(int j=0;j<10;j++)
 		{
 
 			net.setNumData((*database->getLaps())[i][j].getNumPoints());
@@ -63,12 +63,12 @@ drive_object::drive_object(db* database)
 			cout << "lap complete" << endl;
 			net.inputTraindata(input,output);
 			net.train();
-			for(int i = 0; i < (*database->getLaps())[i][j].getNumPoints(); i++) {
+/*			for(int i = 0; i < (*database->getLaps())[i][j].getNumPoints(); i++) {
 				delete input[i];
 				delete output[i];
 			}
 			delete input;
-			delete output;
+			delete output; */
 		}
 	}
 }

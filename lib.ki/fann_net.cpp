@@ -85,12 +85,11 @@ void fann_net::inputTraindata(fann_type** input, fann_type** output) {
 	insertedOut = 0;
 	data.set_train_data(numData, numIn, input, numOut, output);
 	cout << "data put in train data" << endl;
-	for(int i = 0; i < numData; i++) {
-			delete input[i];
+/*		delete input[i];
 			delete output[i];
 	}
 	delete input;
-	delete output;	
+	delete output; */	
 }
 
 void fann_net::generateNet() {
