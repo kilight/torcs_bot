@@ -10,16 +10,6 @@
 
 using namespace std;
 
-
-const float learning_rate = 0.7f;
-const unsigned int num_layers = 3;
-const unsigned int num_input = 2;
-const unsigned int num_hidden = 3;
-const unsigned int num_output = 1;
-const float desired_error = 0.001f;
-const unsigned int max_iterations = 300000;
-const unsigned int iterations_between_reports = 1000;
-
 class fann_net {
 public:
 	fann_net();
@@ -40,6 +30,10 @@ public:
 	void setNumOut(int numOut) { this->numOut = numOut; }
 	int getNumOut() { return this->numOut; }
 
+	void setNetParameters(float learning_rate, unsigned int num_layers, unsigned int num_input, 
+		unsigned int num_hidden, unsigned int num_output, float desired_error, 
+		unsigned int max_iterations, unsigned int iterations_between_reports);
+
 private:
 	fann_type** input;
 	fann_type** output;
@@ -53,4 +47,13 @@ private:
 
 	FANN::training_data data;
 	FANN::neural_net net;
+
+	float learning_rate;
+	unsigned int num_layers;
+	unsigned int num_input;
+	unsigned int num_hidden;
+	unsigned int num_output;
+	float desired_error;
+	unsigned int max_iterations;
+	unsigned int iterations_between_reports;
 };

@@ -13,6 +13,15 @@ fann_net::fann_net() {
 
 	insertedIn = 0;
 	insertedOut = 0;
+
+	learning_rate = 0.7f;
+	num_layers = 3;
+	num_input = 2;
+	num_hidden = 3;
+	num_output = 1;
+	desired_error = 0.001f;
+	max_iterations = 300000;
+	iterations_between_reports = 1000;
 }
 
 fann_net::~fann_net() {
@@ -21,6 +30,19 @@ fann_net::~fann_net() {
 
 void fann_net::menu() {
 
+}
+
+void fann_net::setNetParameters(float learning_rate, unsigned int num_layers, unsigned int num_input, 
+		unsigned int num_hidden, unsigned int num_output, float desired_error, 
+		unsigned int max_iterations, unsigned int iterations_between_reports) {
+	this->learning_rate = learning_rat;
+	this->num_layers = num_layers;
+	this->num_input = num_input;
+	this->num_hidden = num_hidden;
+	this->num_output = num_output;
+	this->desired_error = desired_error;
+	this->max_iterations = max_iterations;
+	this->iterations_between_reports = iterations_between_reports;
 }
 
 /* void fann_net::sensor2Float(vector< sensor* >* data) {
