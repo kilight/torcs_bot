@@ -25,6 +25,7 @@
 #include "WrapperBaseDriver.h"
 
 #include "./lib.ki/shift.h"
+#include "./lib.ki/drive.h"
 
 #define PI 3.14159265
 
@@ -50,6 +51,11 @@ public:
 	virtual void init(float *angles);
 
 private:
+
+	/* Bot classes */
+
+	shift_object shift;
+	drive_object driver;
 	
 	/* Gear Changing Constants*/
 	
