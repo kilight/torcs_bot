@@ -52,10 +52,10 @@ drive_object::drive_object(db* database)
 				outputvec = new fann_type[num_outputs];
 
 				if(tmp->getAngle() < 0) {
-					inputvec[0]=(float) tmp->getAngle() / -2*3.142f;
+					inputvec[0]=(float) tmp->getAngle() / -1*2;
 				}
 				else {
-					inputvec[0]=tmp->getAngle() / 2*3.142f + 0.5f;
+					inputvec[0]=tmp->getAngle() / 2 + 0.5f;
 				}
 				inputvec[1]=(float) tmp->getSpeedX() / 300;
 				inputvec[2]=(float) tmp->getSpeedY() / 200;
@@ -120,10 +120,10 @@ int drive_object::race(CarState &cs) {		// common racing interface
 	fann_type* input = new fann_type[num_inputs];
 	fann_type* output = new fann_type[num_outputs];	
 	if(cs.getAngle() < 0) {
-		input[0]=(float) cs.getAngle() / -2*3.142f;
+		input[0]=(float) cs.getAngle() / -1*2;
 	}
 	else {
-		input[0]=cs.getAngle() / 2*3.142f + 0.5f;
+		input[0]=cs.getAngle() / 2 + 0.5f;
 	}
 	input[1] = cs.getSpeedX() / 300;
 	input[2] = cs.getSpeedY() / 200;
