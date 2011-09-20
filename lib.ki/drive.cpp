@@ -25,7 +25,8 @@ drive_object::drive_object(db* database)
 		// die -1 am Ende ist wegen dem Start bei 0
 
                 //for(int j=0;j<(*database->getLaps())[i].size();j++)
-		for(int j=0;j<5;j++)
+		int j = 0;
+		for(int z=0;z<5;z++)
 		{
 
 			cout << "Lap Nr. " << j+1 << endl;

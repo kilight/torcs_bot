@@ -15,7 +15,7 @@ fann_net::fann_net() {
 	insertedOut = 0;
 
 	learning_rate = 0.3f;
-	num_layers = 4;
+	num_layers = 5;
 	num_input = 28;
 	num_hidden = 3;
 	num_output = 2;
