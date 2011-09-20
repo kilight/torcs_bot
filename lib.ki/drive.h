@@ -16,7 +16,7 @@ using namespace std;
 #include"../lib.db/db.h"
 #include"fann_net.h"
 
-const int num_inputs = 4;
+const int num_inputs = 23;
 const int num_outputs = 3;
 
 class drive_object

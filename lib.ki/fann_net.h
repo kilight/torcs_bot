@@ -46,6 +46,9 @@ public:
 	bool create_shortcut_array(unsigned int num_layers, const unsigned int* layers) { 
 		return net.create_shortcut_array(num_layers, layers);
 	}
+	void cascadetrain_on_data(const FANN::training_data &data, unsigned int max_neurons, unsigned int neurons_between_reports, float desired_error) {
+		net.cascadetrain_on_data(data, max_neurons, neurons_between_reports, desired_error);
+	}
 
 
 	void inputTraindata(fann_type** input, fann_type** output);

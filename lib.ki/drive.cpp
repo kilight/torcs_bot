@@ -17,16 +17,18 @@ drive_object::drive_object(db* database)
 	net.generateNet();
 
 	// alle tracks laden
-	//for(int i=0;i<database->getTracks()->size();i++)
-	for(int i=0;i<1;i++)
+	for(int i=0;i<database->getTracks()->size();i++)
+	//for(int i=0;i<1;i++)
 	{                
 		// rundenbetrachtung
 		// das (* .... )[] braucht man, da die Funktion getLaps() einem einen Zeiger auf einen Array zurückliefert
 		// die -1 am Ende ist wegen dem Start bei 0
 
-                //for(int j=0;j<(*database->getLaps())[i].size();j++)
-		for(int j=0;j<10;j++)
+                for(int j=0;j<(*database->getLaps())[i].size();j++)
+		//for(int j=0;j<10;j++)
 		{
+
+			cout << "Lap Nr. " << j+1 << endl;
 
 			net.setNumData((*database->getLaps())[i][j].getNumPoints());
 			net.setNumInput(num_inputs);
@@ -52,7 +54,9 @@ drive_object::drive_object(db* database)
 				inputvec[1]=(float) tmp->getSpeedX();
 				inputvec[2]=(float) tmp->getSpeedY();
 				inputvec[3]=(float) tmp->getTrackPos();
-				// for(int i=0;i<19;i++){inputvec[i+4]=(float) tmp->getTrack(i);}
+				for(int i=0;i<19;i++){ inputvec[i+4]=(float) tmp->getTrack(i); }
+				inputvec[23]=(float) tmp->getRpm();
+				for(int i=0;i<4;i++){ inputvec[i+24]=(float) tmp->getWheelSpinVel(i); }
 
 				outputvec[0]=(float) tmp->getAccel();
 				outputvec[1]=(float) tmp->getBrake();
@@ -89,6 +93,13 @@ int drive_object::race(CarState &cs) {		// common racing interface
 	input[1] = cs.getSpeedX();
 	input[2] = cs.getSpeedY();
 	input[3] = cs.getTrackPos();
+	for(int i = 0; i < 19; i++) {
+		input[i+4] = cs.getTrack(i);
+	}
+	for(int i=0;i<4;i++) {
+		inputvec[i+24]=(float) tmp->getWheelSpinVel(i); 
+	}
+
 
 	output = net.run(input);
 	accel = output[0];
