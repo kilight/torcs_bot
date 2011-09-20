@@ -95,7 +95,7 @@ void fann_net::inputTraindata(fann_type** input, fann_type** output) {
 void fann_net::generateNet() {
 	std::ios::sync_with_stdio();
  	cout << endl << "Creating network." << endl;
-	unsigned int layers[4] = {num_input, 150, 151, num_output};
+	unsigned int layers[4] = {num_input, 60, 61, num_output};
 	//net.create_standard_array(num_layers, layers);	
 	net.create_standard_array(num_layers, layers);
         // net.create_standard(num_layers, num_input, num_hidden, num_output);

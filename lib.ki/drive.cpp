@@ -13,6 +13,7 @@ drive_object::drive_object(){
 drive_object::drive_object(db* database)
 {
 	this->database=database;
+	net.destroy();
 	net.generateNet();
 
 	// alle tracks laden
