@@ -54,9 +54,9 @@ drive_object::drive_object(db* database)
 				inputvec[1]=(float) tmp->getSpeedX();
 				inputvec[2]=(float) tmp->getSpeedY();
 				inputvec[3]=(float) tmp->getTrackPos();
-				for(int i=0;i<19;i++){ inputvec[i+4]=(float) tmp->getTrack(i); }
-				inputvec[23]=(float) tmp->getRpm();
-				for(int i=0;i<4;i++){ inputvec[i+24]=(float) tmp->getWheelSpinVel(i); }
+				for(int i=0;i<19;i++){ inputvec[i+4]=(float) tmp->getTrack(i) / 200; }
+				inputvec[23]=(float) tmp->getRpm() / 8000;
+				for(int i=0;i<4;i++){ inputvec[i+24]=(float) tmp->getWheelSpinVel(i) / 200; }
 
 				outputvec[0]=(float) tmp->getAccel();
 				outputvec[1]=(float) tmp->getBrake();
@@ -94,11 +94,11 @@ int drive_object::race(CarState &cs) {		// common racing interface
 	input[2] = cs.getSpeedY();
 	input[3] = cs.getTrackPos();
 	for(int i = 0; i < 19; i++) {
-		input[i+4] = cs.getTrack(i);
+		input[i+4] = cs.getTrack(i) / 200;
 	}
-	input[23]=(float) cs.getRpm();
+	input[23]=(float) cs.getRpm() / 8000;
 	for(int i=0;i<4;i++) {
-		input[i+24]=(float) cs.getWheelSpinVel(i); 
+		input[i+24]=(float) cs.getWheelSpinVel(i) / 200; 
 	}
 
 

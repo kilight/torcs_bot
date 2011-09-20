@@ -14,7 +14,7 @@ fann_net::fann_net() {
 	insertedIn = 0;
 	insertedOut = 0;
 
-	learning_rate = 0.9f;
+	learning_rate = 0.7f;
 	num_layers = 4;
 	num_input = 28;
 	num_hidden = 3;
@@ -107,8 +107,8 @@ void fann_net::generateNet() {
 
 	net.set_training_algorithm(FANN::TRAIN_RPROP);
     
-        net.set_activation_function_hidden(FANN::GAUSSIAN);
-        net.set_activation_function_output(FANN::GAUSSIAN);
+        net.set_activation_function_hidden(FANN::GAUSSIAN_SYMMETRIC);
+        net.set_activation_function_output(FANN::GAUSSIAN_SYMMETRIC);
 }
 
 // Callback function that simply prints the information to cout
@@ -124,8 +124,8 @@ int print_callback(FANN::neural_net &net, FANN::training_data &train,
 void fann_net::train() {
 	net.init_weights(data);
         net.set_callback(print_callback, NULL);
-        //net.train_on_data(data, max_iterations, iterations_between_reports, desired_error);
-	net.cascadetrain_on_data(data, 10000, 10, desired_error);        
+        net.train_on_data(data, max_iterations, iterations_between_reports, desired_error);
+	//net.cascadetrain_on_data(data, 10000, 10, desired_error);        
 	for (unsigned int i = 0; i < data.length_train_data(); ++i)
         {
             // Run the network on the test data
