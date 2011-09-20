@@ -37,6 +37,16 @@ public:
 	void destroy() { net.destroy(); }
 	bool create_from_file(const std::string& configuration_file) { return net.create_from_file(configuration_file); }
 
+	bool create_standard_array(unsigned int num_layers, const unsigned int* layers) { 
+		return net.create_standard_array(num_layers, layers);
+	}
+	bool create_sparse_array(float connection_rate, unsigned int num_layers, const unsigned int* layers) { 
+		return net.create_sparse_array(connection_rate, num_layers, layers);
+	}
+	bool create_shortcut_array(unsigned int num_layers, const unsigned int* layers) { 
+		return net.create_shortcut_array(num_layers, layers);
+	}
+
 
 	void inputTraindata(fann_type** input, fann_type** output);
 

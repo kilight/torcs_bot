@@ -14,14 +14,14 @@ fann_net::fann_net() {
 	insertedIn = 0;
 	insertedOut = 0;
 
-	learning_rate = 0.7f;
-	num_layers = 3;
-	num_input = 2;
+	learning_rate = 0.1f;
+	num_layers = 4;
+	num_input = 23;
 	num_hidden = 3;
-	num_output = 1;
-	desired_error = 0.06f;
-	max_iterations = 300000;
-	iterations_between_reports = 1000;
+	num_output = 3;
+	desired_error = 0.001f;
+	max_iterations = 10000;
+	iterations_between_reports = 250;
 }
 
 fann_net::~fann_net() {
@@ -95,8 +95,10 @@ void fann_net::inputTraindata(fann_type** input, fann_type** output) {
 void fann_net::generateNet() {
 	std::ios::sync_with_stdio();
  	cout << endl << "Creating network." << endl;
-
-        net.create_standard(num_layers, num_input, num_hidden, num_output);
+	unsigned int layers[4] = {num_input, 150, 151, num_output};
+	//net.create_standard_array(num_layers, layers);	
+	net.create_standard_array(num_layers, layers);
+        // net.create_standard(num_layers, num_input, num_hidden, num_output);
 
         net.set_learning_rate(learning_rate);
 
