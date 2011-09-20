@@ -24,8 +24,8 @@ drive_object::drive_object(db* database)
 		// das (* .... )[] braucht man, da die Funktion getLaps() einem einen Zeiger auf einen Array zurückliefert
 		// die -1 am Ende ist wegen dem Start bei 0
 
-                for(int j=0;j<(*database->getLaps())[i].size();j++)
-		//for(int j=0;j<10;j++)
+                //for(int j=0;j<(*database->getLaps())[i].size();j++)
+		for(int j=0;j<3;j++)
 		{
 
 			cout << "Lap Nr. " << j+1 << endl;
@@ -58,9 +58,13 @@ drive_object::drive_object(db* database)
 				inputvec[23]=(float) tmp->getRpm() / 8000;
 				for(int i=0;i<4;i++){ inputvec[i+24]=(float) tmp->getWheelSpinVel(i) / 200; }
 
-				outputvec[0]=(float) tmp->getAccel();
-				outputvec[1]=(float) tmp->getBrake();
-				outputvec[2]=(float) tmp->getSteer();
+				if(tmp->getBrake() == 0) {
+					outputvec[0] = 0.5f + tmp->getAccel() / 2;
+				}
+				else {
+					outputvec[0] = tmp->getBrake() / 2;
+				}
+				outputvec[1]=(float) tmp->getSteer();
 				// cout << "data vector " << k << "are put in the training data now" << endl;
 				//net.saveInputFieldVector(input);
 				//net.saveOutputFieldVector(output);
@@ -103,7 +107,13 @@ int drive_object::race(CarState &cs) {		// common racing interface
 
 
 	output = net.run(input);
-	accel = output[0];
-	brake = output[1];
+	if(output[0] > 0.5f) {
+		accel = 2* (output[0] - 0.5f);
+		brake = 0;
+	}
+	else {	
+		brake = 2* output[1];
+		accel = 0;
+	}
 	steer = output[2];
 }

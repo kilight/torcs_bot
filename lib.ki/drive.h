@@ -17,7 +17,7 @@ using namespace std;
 #include"fann_net.h"
 
 const int num_inputs = 28;
-const int num_outputs = 3;
+const int num_outputs = 2;
 
 class drive_object
 {

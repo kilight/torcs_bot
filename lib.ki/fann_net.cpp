@@ -18,7 +18,7 @@ fann_net::fann_net() {
 	num_layers = 4;
 	num_input = 28;
 	num_hidden = 3;
-	num_output = 3;
+	num_output = 2;
 	desired_error = 0.001f;
 	max_iterations = 1000;
 	iterations_between_reports = 250;
@@ -107,8 +107,8 @@ void fann_net::generateNet() {
 
 	net.set_training_algorithm(FANN::TRAIN_RPROP);
     
-        net.set_activation_function_hidden(FANN::GAUSSIAN_SYMMETRIC);
-        net.set_activation_function_output(FANN::GAUSSIAN_SYMMETRIC);
+        net.set_activation_function_hidden(FANN::SIGMOID_STEPWISE);
+        net.set_activation_function_output(FANN::SIGMOID_STEPWISE);
 }
 
 // Callback function that simply prints the information to cout
