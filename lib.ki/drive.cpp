@@ -25,7 +25,7 @@ drive_object::drive_object(db* database)
 		// die -1 am Ende ist wegen dem Start bei 0
 
                 //for(int j=0;j<(*database->getLaps())[i].size();j++)
-		for(int j=0;j<3;j++)
+		for(int j=0;j<5;j++)
 		{
 
 			cout << "Lap Nr. " << j+1 << endl;
@@ -50,21 +50,46 @@ drive_object::drive_object(db* database)
 				inputvec = new fann_type[num_inputs];
 				outputvec = new fann_type[num_outputs];
 
-				inputvec[0]=(float) tmp->getAngle();
-				inputvec[1]=(float) tmp->getSpeedX();
-				inputvec[2]=(float) tmp->getSpeedY();
-				inputvec[3]=(float) tmp->getTrackPos();
+				if(tmp->getAngle() < 0) {
+					inputvec[0]=(float) tmp->getAngle() / -2*3.142f;
+				}
+				else {
+					inputvec[0]=tmp->getAngle() / 2*3.142f + 0.5f;
+				}
+				inputvec[1]=(float) tmp->getSpeedX() / 300;
+				inputvec[2]=(float) tmp->getSpeedY() / 200;
+				if(tmp->getTrackPos() < 0) {
+					inputvec[3]=(float) tmp->getTrackPos() / -3;
+				}
+				else {
+					inputvec[3]=tmp->getTrackPos() / 3 + 0.5f;
+				}
 				for(int i=0;i<19;i++){ inputvec[i+4]=(float) tmp->getTrack(i) / 200; }
 				inputvec[23]=(float) tmp->getRpm() / 8000;
 				for(int i=0;i<4;i++){ inputvec[i+24]=(float) tmp->getWheelSpinVel(i) / 200; }
 
 				if(tmp->getBrake() == 0) {
-					outputvec[0] = 0.5f + tmp->getAccel() / 2;
+					if(tmp->getAccel() == 1) {
+						outputvec[0] = 0.5f + tmp->getAccel() / 2;
+						outputvec[0] -= 0.00001;
+					}
+					else {
+						outputvec[0] = 0.5f + tmp->getAccel() / 2;
+					}
 				}
 				else {
 					outputvec[0] = tmp->getBrake() / 2;
 				}
-				outputvec[1]=(float) tmp->getSteer();
+				if(tmp->getSteer() == 1) {
+					outputvec[1]=(float) tmp->getSteer();
+					outputvec[1] -= 0.00001;
+				}
+				else {
+					if(tmp->getSteer() == 0) {
+						outputvec[1]=(float) tmp->getSteer();
+						outputvec[1] += 0.00001;
+					}
+				}
 				// cout << "data vector " << k << "are put in the training data now" << endl;
 				//net.saveInputFieldVector(input);
 				//net.saveOutputFieldVector(output);
@@ -93,10 +118,20 @@ drive_object::~drive_object()
 int drive_object::race(CarState &cs) {		// common racing interface
 	fann_type* input = new fann_type[num_inputs];
 	fann_type* output = new fann_type[num_outputs];	
-	input[0] = cs.getAngle();
-	input[1] = cs.getSpeedX();
-	input[2] = cs.getSpeedY();
-	input[3] = cs.getTrackPos();
+	if(cs.getAngle() < 0) {
+		input[0]=(float) cs.getAngle() / -2*3.142f;
+	}
+	else {
+		input[0]=cs.getAngle() / 2*3.142f + 0.5f;
+	}
+	input[1] = cs.getSpeedX() / 300;
+	input[2] = cs.getSpeedY() / 200;
+	if(cs.getTrackPos() < 0) {
+		input[3]=cs.getTrackPos() / -3;
+	}
+	else {
+		input[3]=cs.getTrackPos() / 3 + 0.5f;
+	}
 	for(int i = 0; i < 19; i++) {
 		input[i+4] = cs.getTrack(i) / 200;
 	}
