@@ -96,6 +96,7 @@ int drive_object::race(CarState &cs) {		// common racing interface
 	for(int i = 0; i < 19; i++) {
 		input[i+4] = cs.getTrack(i);
 	}
+	input[23]=(float) cs.getRpm();
 	for(int i=0;i<4;i++) {
 		input[i+24]=(float) cs.getWheelSpinVel(i); 
 	}

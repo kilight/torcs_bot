@@ -16,7 +16,7 @@ fann_net::fann_net() {
 
 	learning_rate = 0.9f;
 	num_layers = 4;
-	num_input = 23;
+	num_input = 28;
 	num_hidden = 3;
 	num_output = 3;
 	desired_error = 0.001f;
@@ -95,7 +95,7 @@ void fann_net::inputTraindata(fann_type** input, fann_type** output) {
 void fann_net::generateNet() {
 	std::ios::sync_with_stdio();
  	cout << endl << "Creating network." << endl;
-	unsigned int layers[4] = {num_input, 23, 23, num_output};
+	unsigned int layers[4] = {num_input, 28, 28, num_output};
 	//net.create_standard_array(num_layers, layers);	
 	net.create_shortcut_array(2, layers);
         // net.create_standard(num_layers, num_input, num_hidden, num_output);
