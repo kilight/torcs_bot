@@ -16,24 +16,26 @@ using namespace std;
 #include"../lib.db/db.h"
 #include"fann_net.h"
 
-const int num_inputs = 28;
-const int num_outputs = 2;
+const int num_inputs = 1;
+const int num_outputs = 1;
 
 class drive_object
 {
 private:	db* database;
 		fann_net net;
-
-		float accel;
-		float brake;
-		float steer;	
+	
 		
 public:		 
-		drive_object();		// race constructor
+		drive_object();			// race constructor
 		 drive_object(db* database);	// learn constructor
 		~drive_object();
 
-		int race(CarState &cs);		// common racing interface
+		float accel;
+		float brake;
+		float steer;
+
+		void race(CarState &cs);		// common racing interface
+		void race_ki(CarState &cs);
 
 		float getAccel(){return accel;}
 		float getBrake(){return brake;}

@@ -63,14 +63,14 @@ int shift_object::race(CarState &cs)
 	// set to standart constructor if in use
 	/***************************************/
 	float speed_miner=0;
-	ifstream inSpeedFile("lib.ki/speed.miner");
+	ifstream inSpeedFile("lib.ki/shift.miner/speed.miner");
 	inSpeedFile>>speed_miner;
 	/***************************************/
 	if(gear==0||gear==-1)
 	{
 		// write current speedX to speed.miner
 		/*******************************************/
-		ofstream outSpeedFile("lib.ki/speed.miner");
+		ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 		outSpeedFile<<cs.getSpeedX();
 		outSpeedFile.close();
 		/*******************************************/		
@@ -84,12 +84,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g1up.miner");
+			ifstream inMind("lib.ki/shift.miner/g1up.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -102,12 +102,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g2up.miner");
+			ifstream inMind("lib.ki/shift.miner/g2up.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -120,12 +120,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g3up.miner");
+			ifstream inMind("lib.ki/shift.miner/g3up.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -138,12 +138,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g4up.miner");
+			ifstream inMind("lib.ki/shift.miner/g4up.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -156,12 +156,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g5up.miner");
+			ifstream inMind("lib.ki/shift.miner/g5up.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -174,19 +174,19 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g6up.miner");
+			ifstream inMind("lib.ki/shift.miner/g6up.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
 			if(cs.getRpm()>=miner){return gear+1;}
 			else{return gear;}
 		}
-		else {}
+		else {return gear+1;}
 	}
 	else if(cs.getSpeedX()<speed_miner)		// if slower
 	{
@@ -196,12 +196,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g2do.miner");
+			ifstream inMind("lib.ki/shift.miner/g2do.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -214,12 +214,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g3do.miner");
+			ifstream inMind("lib.ki/shift.miner/g3do.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -232,12 +232,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g4do.miner");
+			ifstream inMind("lib.ki/shift.miner/g4do.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -250,12 +250,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g5do.miner");
+			ifstream inMind("lib.ki/shift.miner/g5do.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -268,12 +268,12 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g6do.miner");
+			ifstream inMind("lib.ki/shift.miner/g6do.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
@@ -286,19 +286,19 @@ int shift_object::race(CarState &cs)
 			// set to standart constructor if in use
 			/***************************************/
 			float miner=0;
-			ifstream inMind("lib.ki/g7do.miner");
+			ifstream inMind("lib.ki/shift.miner/g7do.miner");
 			inMind>>miner;
 			/***************************************/
 			// write current speedX to speed.miner
 			/*******************************************/
-			ofstream outSpeedFile("lib.ki/speed.miner");
+			ofstream outSpeedFile("lib.ki/shift.miner/speed.miner");
 			outSpeedFile<<cs.getSpeedX();
 			outSpeedFile.close();
 			/*******************************************/
 			if(cs.getRpm()<=miner){return gear-1;}
 			else{return gear;}
 		}
-		else{}
+		else{return gear;}
 	}
 }
 
