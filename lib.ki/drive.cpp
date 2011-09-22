@@ -43,11 +43,13 @@ drive_object::drive_object(db* database)
 			for(int k=0;k<(*database->getLaps())[i][j].getNumPoints();k++)
 			{
 				// beispiel um das k-te Element zu speichern
+				
 				sensor* tmp;
 				// getData() gibt einen Zeiger auf den Vektor zurück in dem Zeiger auf die Sensordaten gespeichert sind
 				// da es ein Vektor ist geht hier [] aber wegen Zeiger => (* ... )
+					
 				tmp=(*(*database->getLaps())[i][j].getData())[k];
-
+				
 				inputvec = new fann_type[num_inputs];
 				outputvec = new fann_type[num_outputs];
 
@@ -67,7 +69,7 @@ drive_object::drive_object(db* database)
 				}
 				for(int i=0;i<19;i++){ inputvec[i+4]=(float) tmp->getTrack(i) / 200; }
 				inputvec[23]=(float) tmp->getRpm() / 8000;
-				for(int i=0;i<4;i++){ inputvec[i+24]=(float) tmp->getWheelSpinVel(i) / 200; }
+				for(int i=0;i<4;i++){ inputvec[i+24]=(float) tmp->getWheelSpinVel(i) / 300; }
 
 				if(tmp->getBrake() == 0) {
 					if(tmp->getAccel() == 1) {
@@ -138,7 +140,7 @@ int drive_object::race(CarState &cs) {		// common racing interface
 	}
 	input[23]=(float) cs.getRpm() / 8000;
 	for(int i=0;i<4;i++) {
-		input[i+24]=(float) cs.getWheelSpinVel(i) / 200; 
+		input[i+24]=(float) cs.getWheelSpinVel(i) / 300; 
 	}
 
 

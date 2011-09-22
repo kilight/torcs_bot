@@ -71,6 +71,7 @@ sensor file::fetchNextData() {
 	ss << s;
 	retval = sensor(ss.str());
 	if(filestream->eof()) {
+		cout << "reached eof" << endl;
 		retval.setDistFromStart(-10.0);
 		retval.setCurLapTime(-10.0);
 	}
@@ -133,8 +134,10 @@ int file::getPos() {
 }
 
 bool file::eof() {
-	open();
-	bool retval = filestream->eof();
-	close();
+	//open();
+	bool retval = false;
+	if (filestream->is_open())
+		retval = filestream->eof();
+	//close();
 	return retval;
 }

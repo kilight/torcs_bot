@@ -38,6 +38,7 @@ db::~db() {
 
 db::db(string location) {
 	this->savedir = "./lib.db/";
+	cout << "db file location: " << location << endl;
 	this->location = location;
 }
 
@@ -48,6 +49,8 @@ void db::getBotsTracksFiles() {
 	tmp += "files.txt";
 	
 	system(tmp.c_str());
+	
+	cout << "executing: " << tmp << endl;
 	
 	fstream filelist;
 	tmp = "";
@@ -160,6 +163,8 @@ void db::getBotsTracksFiles() {
 
 void db::calcLaps() {
 	// analyze the files to create the lap linklist and remember the data in tracks
+	
+	cout << "starting calcLaps" << endl;
 	for(int k = 0; k < trackmap.size(); k++) {
 		for(int i = 0; i < trackmap[k].size(); i++) {
 			
@@ -191,7 +196,9 @@ void db::calcLaps() {
 			int num = 0;
 			vector<lap> lapsInFile;
 			
-			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() && num < 20 ; num++) {
+			cout << "getPos: " << files[trackmap[k][i]].getPos() << " getSize: " << files[trackmap[k][i]].getSize() << " num: " << num << " !eof: " << !files[trackmap[k][i]].eof() << endl;
+			
+			for(int j = prestartOffset + dataPoints; files[trackmap[k][i]].getPos() < files[trackmap[k][i]].getSize() && num < 20 && !files[trackmap[k][i]].eof(); num++) {
 			
 				lap * tmplap = new lap();
 				tmplap->setPosInRun(num + 1);
@@ -199,7 +206,7 @@ void db::calcLaps() {
 				tmplap->setPosInFile(files[trackmap[k][i]].getPos());
 				tmplap->setFile(trackmap[k][i]);
 				dataPoints = 0;
-				for(sensor s = s2; 1 == 1 ; dataPoints++) {					
+				for(sensor s = s2; !files[trackmap[k][i]].eof() ; dataPoints++) {
 					s = files[trackmap[k][i]].fetchNextData();
 					if (s.getCurLapTime() < s2.getCurLapTime() && s.getDistFromStart() < s2.getDistFromStart()) {
 						tmplap->setLength(s2.getDistFromStart());				
@@ -229,7 +236,7 @@ void db::calcLaps() {
 			files[trackmap[k][i]].close();
 		}
 	}
-	this->dbsave(savedir + "database2.txt");
+	this->dbsave(savedir + "database.txt");
 }	
 
 

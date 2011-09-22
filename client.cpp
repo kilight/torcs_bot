@@ -92,6 +92,7 @@ int main(int argc, char *argv[]) {
 			char c[500];
 			directory.getline(c, 500, '\n');
 			ss1 << c;
+			directory.close();
 			test = new db(ss1.str());
 			test->getBotsTracksFiles();
 			test->calcLaps();
@@ -338,6 +339,7 @@ int startClient(int argc, char* argv[])
 		if ( (++currentStep) != maxSteps)
 		{
                 	string action = d.drive(string(buf));
+			cout << "sent " << action << endl;
                 	memset(buf, 0x0, UDP_MSGLEN);
 			sprintf(buf,"%s",action.c_str());
 		}
