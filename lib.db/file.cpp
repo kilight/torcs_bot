@@ -79,6 +79,8 @@ sensor file::fetchNextData() {
 }
 
 void file::setPosition(int pos) {
+	filestream->clear();
+	linesRead = pos;
 	filestream->seekg(pos);
 }
 

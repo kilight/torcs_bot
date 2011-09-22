@@ -15,7 +15,11 @@ drive_object::drive_object(db* database)
 	this->database=database;
 	net.destroy();
 	net.generateNet();
+}
 
+
+void drive_object::learnFromDatabase()
+{
 	// alle tracks laden
 	for(int i=0;i<database->getTracks()->size();i++)
 	//for(int i=0;i<1;i++)
@@ -111,10 +115,109 @@ drive_object::drive_object(db* database)
 		}
 	}
 }
-drive_object::~drive_object()
+
+void drive_object::learnFromDataFolder() 
 {
 	
+		
+	file data("./data/data.input.output");
+	data.setName("data.input.output");
+	data.open();
 	
+	sensor s;
+	int numPoints = 0;
+	while(!data.eof() && (s.getDistFromStart() != -10.0 && s.getCurLapTime() != -10.0)) {
+		s = data.fetchNextData();
+		numPoints++;
+	}
+	
+	cout << "numPoints in file: " << numPoints << endl;
+	
+	net.setNumData(numPoints);
+	net.setNumInput(num_inputs);
+	net.setNumOut(num_outputs);
+
+	fann_type** output = new fann_type*[net.getNumData()];
+	fann_type** input = new fann_type*[net.getNumData()];			
+	fann_type* inputvec;
+	fann_type* outputvec;
+	data.close();
+	data.open();
+	data.setPosition(ios::beg);
+	int countPointsFetched = 0;
+	for(int k=0;k < numPoints;k++)
+	{
+		// beispiel um das k-te Element zu speichern
+					
+		s = data.fetchNextData();
+		countPointsFetched++;
+		
+		inputvec = new fann_type[num_inputs];
+		outputvec = new fann_type[num_outputs];
+
+		if(s.getAngle() < 0) {
+			inputvec[0]=(float) s.getAngle() / -1*2;
+		}
+		else {
+			inputvec[0]=s.getAngle() / 2 + 0.5f;
+		}
+		inputvec[1]=(float) s.getSpeedX() / 300;
+		inputvec[2]=(float) s.getSpeedY() / 200;
+		if(s.getTrackPos() < 0) {
+			inputvec[3]=(float) s.getTrackPos() / -3;
+		}
+		else {
+			inputvec[3]=s.getTrackPos() / 3 + 0.5f;
+		}
+		for(int i=0;i<19;i++){ inputvec[i+4]=(float) s.getTrack(i) / 200; }
+			inputvec[23]=(float) s.getRpm() / 8000;
+			for(int i=0;i<4;i++){ inputvec[i+24]=(float) s.getWheelSpinVel(i) / 300; }
+
+			if(s.getBrake() == 0) {
+				if(s.getAccel() == 1) {
+					outputvec[0] = 0.5f + s.getAccel() / 2;
+					outputvec[0] -= 0.00001;
+				}
+				else {
+					outputvec[0] = 0.5f + s.getAccel() / 2;
+				}
+			}
+			else {
+				outputvec[0] = s.getBrake() / 2;
+			}
+			if(s.getSteer() == 1) {
+				outputvec[1]=(float) s.getSteer();
+				outputvec[1] -= 0.00001;
+			}
+			else {
+				if(s.getSteer() == 0) {
+					outputvec[1]=(float) s.getSteer();
+					outputvec[1] += 0.00001;
+				}
+			}
+		// cout << "data vector " << k << "are put in the training data now" << endl;
+		//net.saveInputFieldVector(input);
+		//net.saveOutputFieldVector(output);
+		input[k] = inputvec;
+		output[k] = outputvec;
+	}
+	
+	data.close();
+	cout << "Points fetched for neural network: " << countPointsFetched << endl;
+	cout << "lap complete" << endl;
+	net.inputTraindata(input,output);
+	net.train();
+/*			for(int i = 0; i < (*database->getLaps())[i][j].getNumPoints(); i++) {
+				delete input[i];
+				delete output[i];
+			}
+			delete input;
+			delete output; */
+}
+
+
+drive_object::~drive_object()
+{
 	
 }
 

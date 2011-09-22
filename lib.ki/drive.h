@@ -28,7 +28,8 @@ private:	db* database;
 		float brake;
 		float steer;	
 		
-public:		 drive_object();		// race constructor
+public:		 
+		drive_object();		// race constructor
 		 drive_object(db* database);	// learn constructor
 		~drive_object();
 
@@ -37,5 +38,8 @@ public:		 drive_object();		// race constructor
 		float getAccel(){return accel;}
 		float getBrake(){return brake;}
 		float getSteer(){return steer;}
+		
+		void learnFromDatabase();
+		void learnFromDataFolder();
 };
 #endif

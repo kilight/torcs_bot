@@ -73,9 +73,10 @@ int main(int argc, char *argv[]) {
 		cout << "   SimpleDriver Option Menu" << endl;
 		cout << "1. Start SimpleDriver" << endl;
 		cout << "2. Create Database and load files, calculating all stuff from the files (might take some time)" << endl;
-		cout << "3. Train neural network with the loaded data" << endl;
+		cout << "3. Train neural network with the data from ./data/data.output.input" << endl;
 		cout << "4. Restore Database from file" << endl;
-		cout << "5. test to fix file -> lap transfer (there has to be a database loaded)" << endl;
+		cout << "5. Train neural network with the data from the database." << endl;
+		cout << "6. test to fix file -> lap transfer (there has to be a database loaded)" << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;
@@ -99,7 +100,8 @@ int main(int argc, char *argv[]) {
 		}
 		if(input == 3) 
 		{
-			drive_object* drive=new drive_object(test);		
+			drive_object* drive=new drive_object(test);
+			drive->learnFromDataFolder();
 		}
 		if(input == 4) {
 			if(test != NULL)
@@ -115,7 +117,12 @@ int main(int argc, char *argv[]) {
 			test = new db(ss1.str());
 			test->restoreDbaddLaps();
 		}
-		if(input == 5) {
+		if(input == 5) 
+		{
+			drive_object* drive=new drive_object(test);
+			drive->learnFromDatabase();
+		}
+		if(input == 6) {
 			if(test != NULL) {
 				exampledb ex(test);
 				ex.start();
@@ -304,6 +311,8 @@ int startClient(int argc, char* argv[])
 
             if (select(socketDescriptor+1, &readSet, NULL, NULL, &timeVal))
             {
+		fstream data;
+		data.open("./data/data.input.output", fstream::out | fstream::app);
                 // Read data sent by the solorace server
                 memset(buf, 0x0, UDP_MSGLEN);  // Zero out the buffer.
                 numRead = recv(socketDescriptor, buf, UDP_MSGLEN, 0);
@@ -317,6 +326,7 @@ int startClient(int argc, char* argv[])
 #ifdef __UDP_CLIENT_VERBOSE__
                 cout << "Received: " << buf << endl;
 #endif
+		data << buf;
 
                 if (strcmp(buf,"***shutdown***")==0)
                 {
@@ -339,7 +349,7 @@ int startClient(int argc, char* argv[])
 		if ( (++currentStep) != maxSteps)
 		{
                 	string action = d.drive(string(buf));
-			cout << "sent " << action << endl;
+			data << action << endl;
                 	memset(buf, 0x0, UDP_MSGLEN);
 			sprintf(buf,"%s",action.c_str());
 		}
@@ -358,6 +368,7 @@ int startClient(int argc, char* argv[])
                 else
                     cout << "Sending " << buf << endl;
 #endif
+		data.close();
             }
             else
             {
