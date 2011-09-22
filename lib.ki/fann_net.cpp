@@ -14,13 +14,13 @@ fann_net::fann_net() {
 	insertedIn = 0;
 	insertedOut = 0;
 
-	learning_rate = 0.25f;
+	learning_rate = 0.5f;
 	num_layers = 1;
 	num_input = 1;
 	num_hidden = 1;
 	num_output = 1;
-	desired_error = 0.0001f;
-	max_iterations = 10000;
+	desired_error = 0.001f;
+	max_iterations = 1000;
 	iterations_between_reports = 250;
 }
 
@@ -135,8 +135,8 @@ void fann_net::train() {
         cout << endl << "Saving network." << endl;
 
         // Save the network in floating point and fixed point
-        net.save("torcs.net");
-        unsigned int decimal_point = net.save_to_fixed("torcs_fixed.net");
+        net.save("./lib.ki/net.miner/torcs.net");
+        unsigned int decimal_point = net.save_to_fixed("./lib.ki/net.miner/torcs_fixed.net");
 }
 
 void fann_net::testData() {

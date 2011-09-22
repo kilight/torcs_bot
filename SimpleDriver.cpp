@@ -58,7 +58,7 @@ CarControl SimpleDriver::wDrive(CarState cs)
 
         	clutching(cs,clutch);
 		driver.race_ki(cs);	
-        	CarControl cc(driver.getAccel(),0,shift.race(cs),steer,clutch);	
+        	CarControl cc(driver.getAccel(),driver.getBrake(),shift.race(cs),steer,clutch);	
         	return cc;
 }
 

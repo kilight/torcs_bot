@@ -7,7 +7,7 @@
 *****************************/
 drive_object::drive_object(){
 	net.destroy();
-	net.create_from_file("torcs.net");
+	net.create_from_file("./lib.ki/net.miner/torcs.net");
 }
 	
 drive_object::drive_object(db* database)
@@ -102,6 +102,12 @@ void drive_object::learnFromDataFolder()
 		float wheelSpinDifh=abs(s.getWheelSpinVel(2)-s.getWheelSpinVel(3));
 
 		inputvec[0]=wheelSpinDifh;
+		inputvec[1]=s.getTrack(8)+s.getTrack(9)+s.getTrack(10);
+
+		if(s.getTrackPos()<0){inputvec[2]=(s.getTrack(13))+(s.getTrack(14))+(s.getTrack(15)*(-1));}
+		else if(s.getTrackPos(>0)){inputvec[2]=s.getTrack(13)+s.getTrack(14)+s.getTrack(15);}
+		else {inputvec[2]=0;}
+
 		outputvec[0]=s.getAccel();
 	
 		input[k] = inputvec;
@@ -123,16 +129,20 @@ void drive_object::race(CarState &cs)
 		float wheelSpinDifv=abs(cs.getWheelSpinVel(0)-cs.getWheelSpinVel(1));
 		float wheelSpinDifh=abs(cs.getWheelSpinVel(2)-cs.getWheelSpinVel(3));
 
-	if(wheelSpinDifh<2){accel=(float) exp(-5*(float)pow(wheelSpinDifh,2)),brake=0;}
-	else if(wheelSpinDifh>3) {brake=(float) -1*exp(-0.001f*(float)pow(wheelSpinDifh,2))+1,accel=0;}
-	else{accel=0,brake=0;}
-	if(cs.getSpeedX()<40){accel=1,brake=0;}
+		float t0=(cs.getTrack(8)+cs.getTrack(9)+cs.getTrack(10));
+		float t1=(cs.getTrack(13)+cs.getTrack(14)+cs.getTrack(15));
+		float t2=(cs.getTrack(5)+cs.getTrack(4)+cs.getTrack(3));
 
-		char format=' ';
-		char equal='=';
+	if(wheelSpinDifh<1){accel=(float) exp(-5*(float)pow(wheelSpinDifh,2)),brake=0;}
+	else if(wheelSpinDifh>2){brake=(float) -1*exp(-0.001f*(float)pow(wheelSpinDifh,2))+1,accel=0;}
+	else {accel=0,brake=0;}
+	if(cs.getSpeedX()<5){accel=1,brake=0;}
+
+		char format[3]={':','+','='};
 		ofstream outD5("lib.ki/debug.data/debug.send.race",ios_base::app);
-		outD5<<cs.getCurLapTime()<<format<<wheelSpinDifh<<equal<<accel<<endl;
-		outD5.close();
+		outD5<<cs.getCurLapTime()<<format[0]<<wheelSpinDifh<<format[1]<<t0<<format[1]<<endl
+		     <<t1<<format[1]<<t0<<format[2]<<accel<<endl;
+
 
 		float track[19];
 		for(int i=0;i<19;i++){track[i]=cs.getTrack(i);}
