@@ -1,0 +1,59 @@
+int shift_object::tree(CarState &cs)
+{	
+	int gear=cs.getGear();
+	int rpm=cs.getRpm();
+
+	// read speedX and rpm from dataminer
+	// set to standart constructor if in use
+	/***************************************/
+	float mind_speed=0;
+	ifstream inSpeedFile("lib.ki/mind_speed.dat");
+	inSpeedFile>>mind_speed;
+	int mind_rpm;
+	ifstream inRpmFile("lib.ki/mind_rpm.dat");
+	inRpmFile>>mind_rpm;
+	/***************************************/
+
+	// reinforcement ansatz (logisch falsche stelle)
+	/***********************************************
+	if(rpm<mind_rpm){ increase shift point value }
+	***********************************************/
+
+
+	if(gear==0 || gear==-1){return 1;}
+	
+	// write current speedX and rpm to dataminer
+	ofstream outSpeedFile("lib.ki/mind_speed.dat");
+	outSpeedFile<<cs.getSpeedX();
+
+	if(cs.getSpeedX()-mind_speed>0)
+	{
+		if(gear==1)
+		{if(rpm>=4000){return gear+1;};}
+		else if(gear==2)
+		{if(rpm>=5500){return gear+1;};}
+		else if(gear==3)
+		{if(rpm>=7000){return gear+1;};}
+		else if(gear==4)
+		{if(rpm>=8500){return gear+1;};}
+		else if(gear==5)
+		{if(rpm>=8500){return gear+1;};}
+		else if(gear==6)
+		{if(rpm>=0){return gear+1;};}
+		else{return gear;}
+	}
+	else
+	{
+		if(gear==2)
+		{if(rpm<=1000){return gear-1;};}
+		else if(gear==3)
+		{if(rpm<=2000){return gear-1;};}
+		else if(gear==4)
+		{if(rpm<=4000){return gear-1;};}
+		else if(gear==5)
+		{if(rpm<=4000){return gear-1;};}
+		else if(gear==6)
+		{if(rpm<=5000){return gear-1;};}
+		else{return gear;}
+	}
+}

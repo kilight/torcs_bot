@@ -14,14 +14,14 @@ fann_net::fann_net() {
 	insertedIn = 0;
 	insertedOut = 0;
 
-	learning_rate = 0.5f;
+	learning_rate = 0.25f;
 	num_layers = 1;
 	num_input = 1;
 	num_hidden = 1;
 	num_output = 1;
-	desired_error = 0.001f;
+	desired_error = 0.0001f;
 	max_iterations = 1000;
-	iterations_between_reports = 250;
+	iterations_between_reports = 200;
 }
 
 fann_net::~fann_net() {
@@ -95,9 +95,9 @@ void fann_net::inputTraindata(fann_type** input, fann_type** output) {
 void fann_net::generateNet() {
 	std::ios::sync_with_stdio();
  	cout << endl << "Creating network." << endl;
-	unsigned int layers[5] = {num_input,4,8,2,num_output};
-	net.create_standard_array(5,layers);	
-	// net.create_shortcut_array(2, layers);
+	unsigned int layers[5] = {num_input,8,16,2,num_output};
+	// net.create_standard_array(5,layers);	
+	net.create_sparse_array(10,5,layers);
         // net.create_standard(num_layers, num_input, num_hidden, num_output);
 
         net.set_learning_rate(learning_rate);
@@ -105,10 +105,16 @@ void fann_net::generateNet() {
         net.set_activation_steepness_hidden(1.0);
         net.set_activation_steepness_output(1.0);
 
-	net.set_training_algorithm(FANN::TRAIN_RPROP);
+	net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
+	
+	// incremental
+	// batch
+	// quickprop
+	// rprop
+
     
-        net.set_activation_function_hidden(FANN::GAUSSIAN);
-        net.set_activation_function_output(FANN::GAUSSIAN);
+        net.set_activation_function_hidden(FANN::SIN_SYMMETRIC);
+        net.set_activation_function_output(FANN::SIN_SYMMETRIC);
 }
 
 // Callback function that simply prints the information to cout

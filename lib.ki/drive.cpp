@@ -47,9 +47,7 @@ void drive_object::learnFromDatabase()
 				inputvec = new fann_type[num_inputs];
 				outputvec = new fann_type[num_outputs];
 
-				
-
-
+			
 				input[k] = inputvec;
 				output[k] = outputvec;
 			}
@@ -63,18 +61,19 @@ void drive_object::learnFromDatabase()
 void drive_object::learnFromDataFolder() 
 {
 	file data("./data/");
-	data.setName("data.input.output");
+	data.setName("data.input.output_1");
 	data.open();
 	
 	sensor s;
 	int numPoints = 0;
-	while(!data.eof() && (s.getDistFromStart() != -10.0 && s.getCurLapTime() != -10.0)) {
+	while(!data.eof() && (s.getDistFromStart() != -10.0 && s.getCurLapTime() != -10.0)) 
+	{
 		s = data.fetchNextData();
 		numPoints++;
 	}
 	
 	cout << "numPoints in file: " << numPoints << endl;
-	
+
 	net.setNumData(numPoints);
 	net.setNumInput(num_inputs);
 	net.setNumOut(num_outputs);
@@ -101,31 +100,44 @@ void drive_object::learnFromDataFolder()
 		float wheelSpinDifv=abs(s.getWheelSpinVel(0)-s.getWheelSpinVel(1));
 		float wheelSpinDifh=abs(s.getWheelSpinVel(2)-s.getWheelSpinVel(3));
 
-		inputvec[0]=wheelSpinDifh;
+	inputvec[0]=s.getAngle();
+	// inputvec[1]=s.getTrackPos();
+	// inputvec[2]=s.getSpeedX();
+	// inputvec[3]=s.getSpeedY();	
+
+	string X="+";
+	string Y=" steer value ";
+	ofstream outD1("lib.ki/debug.data/debug.learn.steer",ios_base::app);
+	outD1<<inputvec[0]<<X<<inputvec[1]<<X<<inputvec[2]<<X<<inputvec[3]<<Y<<s.getSteer()<<endl;
+
+	outputvec[0]=s.getSteer()*0.785398;
+
+		/* accel brake 
+		inputvec[0]=wheelSpinDifv/5+wheelSpinDifh;
 		inputvec[1]=s.getTrack(8)+s.getTrack(9)+s.getTrack(10);
 
-		if(s.getTrackPos()<0){inputvec[2]=(s.getTrack(13))+(s.getTrack(14))+(s.getTrack(15)*(-1));}
-		else if(s.getTrackPos(>0)){inputvec[2]=s.getTrack(13)+s.getTrack(14)+s.getTrack(15);}
-		else {inputvec[2]=0;}
+		inputvec[2]=(s.getTrack(13))+(s.getTrack(14))+(s.getTrack(15)*(-1));
+		inputvec[3]=s.getTrack(13)+s.getTrack(14)+s.getTrack(15);
+
+		// inputvec[3]=1;
+		// inputvec[4]=1;
 
 		outputvec[0]=s.getAccel();
+		outputvec[1]=s.getBrake();
 	
-		input[k] = inputvec;
+*/		input[k] = inputvec;
 		output[k] = outputvec;
 	}
 	cout << "lap complete" << endl;
 	net.inputTraindata(input,output);
 	net.train();
-
+	data.close();
 }
 
 drive_object::~drive_object(){}
 
 void drive_object::race(CarState &cs) 
 {
-	// fann_type* input = new fann_type[num_inputs];
-	// fann_type* output = new fann_type[num_outputs];	
-
 		float wheelSpinDifv=abs(cs.getWheelSpinVel(0)-cs.getWheelSpinVel(1));
 		float wheelSpinDifh=abs(cs.getWheelSpinVel(2)-cs.getWheelSpinVel(3));
 
@@ -133,19 +145,29 @@ void drive_object::race(CarState &cs)
 		float t1=(cs.getTrack(13)+cs.getTrack(14)+cs.getTrack(15));
 		float t2=(cs.getTrack(5)+cs.getTrack(4)+cs.getTrack(3));
 
-	if(wheelSpinDifh<1){accel=(float) exp(-5*(float)pow(wheelSpinDifh,2)),brake=0;}
-	else if(wheelSpinDifh>2){brake=(float) -1*exp(-0.001f*(float)pow(wheelSpinDifh,2))+1,accel=0;}
-	else {accel=0,brake=0;}
-	if(cs.getSpeedX()<5){accel=1,brake=0;}
+	if(wheelSpinDifh<3)
+	{
+		accel=exp(-2.5f*(float)pow(wheelSpinDifv/5+wheelSpinDifh,2))*(1-abs(cs.getTrackPos()))*(3.141-abs(cs.getAngle()))/3.141;
+		brake=0;
+	}
 
-		char format[3]={':','+','='};
+	else if(wheelSpinDifh>5)
+	{
+		brake=((-1)*exp(-0.01f*pow(wheelSpinDifh,2))+1);
+		accel=0;
+
+	}
+	else {accel=0,brake=0;}
+	if(cs.getSpeedX()<10){accel=1,brake=0;}
+
+
+		/*char format[3]={':','+','='};
 		ofstream outD5("lib.ki/debug.data/debug.send.race",ios_base::app);
 		outD5<<cs.getCurLapTime()<<format[0]<<wheelSpinDifh<<format[1]<<t0<<format[1]<<endl
-		     <<t1<<format[1]<<t0<<format[2]<<accel<<endl;
+		     <<t1<<format[1]<<t0<<format[2]<<accel<<endl;*/
 
-
-		float track[19];
-		for(int i=0;i<19;i++){track[i]=cs.getTrack(i);}
+		/*float track[19];
+		for(int i=0;i<19;i++){track[i]=cs.getTrack(i);}*/
 
 		/*string middle="straight forward: ";
 		string lookLeft="look left: ";
@@ -163,12 +185,37 @@ void drive_object::race_ki(CarState &cs)
 	fann_type* input = new fann_type[num_inputs];
 	fann_type* output = new fann_type[num_outputs];	
 
-	float wheelSpinDifv=abs(cs.getWheelSpinVel(0)-cs.getWheelSpinVel(1));
-	float wheelSpinDifh=abs(cs.getWheelSpinVel(2)-cs.getWheelSpinVel(3));
+	if(cs.getSpeedX()<10){accel=0.75f;}
 
-	input[0]=wheelSpinDifh;
+		float wheelSpinDifv=abs(cs.getWheelSpinVel(0)-cs.getWheelSpinVel(1));
+		float wheelSpinDifh=abs(cs.getWheelSpinVel(2)-cs.getWheelSpinVel(3));
+
+		float track_mitte=(cs.getTrack(8)+cs.getTrack(9)+cs.getTrack(10));
+		float track_rechts=(cs.getTrack(13)+cs.getTrack(14)+cs.getTrack(15));
+		float track_links=(cs.getTrack(5)+cs.getTrack(4)+cs.getTrack(3));
+
+	input[0]=cs.getAngle();
+	// input[1]=cs.getTrackPos();
+	// input[2]=cs.getSpeedX();
+	// input[3]=cs.getSpeedY();	
+	
+	output=net.run(input);
+	steer=output[0]*0.785398;
+
+	string X="+";
+	string Y=" steer value ";
+	ofstream outD1("lib.ki/debug.data/debug.race.steer",ios_base::app);
+	outD1<<input[0]<<X<<input[1]<<X<<input[2]<<X<<input[3]<<Y<<steer<<endl;
+
+	/* accel.brake 
+	input[0]=wheelSpinDifv/5+wheelSpinDifh;
+	input[1]=t0;
+	input[2]=(cs.getTrack(13))+(cs.getTrack(14))+(cs.getTrack(15)*(-1));
+	input[3]=cs.getTrack(13)+cs.getTrack(14)+cs.getTrack(15);
+
 	output=net.run(input);
 	accel=output[0];
+	steer=output[1]; */
 }
 
 

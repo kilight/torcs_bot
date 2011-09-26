@@ -24,10 +24,19 @@ public:		 shift_object();		// race constructor
 		 shift_object(db* database);	// learn constructor
 		~shift_object();
 
-		int race(CarState &cs);				// common racing interface
-		int tree(CarState &cs);				// desicion.tree including online reinforcement.build
-		int simple_interpolation_racer(CarState &cs);
+		float geUp[6];
+		float geDo[6];
 
+		int gear;
+		int rpm;
+		int speed;
+
+		int getGear(void){return gear;}
+
+		void race(CarState &cs);			// common racing interface
+		int tree(CarState &cs);				// desicion.tree including online reinforcement.build
+
+		void reinforcement(CarState &cs);
 		void slp_1(float rpm,int gear);			// single.layer.perceptron learn function
 		void simple_interpolation(float rpm,int gear);	// simple learn funktion
 };
