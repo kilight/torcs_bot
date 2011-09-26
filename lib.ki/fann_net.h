@@ -1,5 +1,8 @@
 /* neuronal network class for the torcs bot */
 
+#ifndef fannnetclass
+#define fannnetclass
+
 #include "../lib.fann/include/floatfann.h"
 #include "../lib.fann/include/fann_cpp.h"
 #include "../lib.db/sensor2.h"
@@ -89,3 +92,5 @@ private:
 	unsigned int max_iterations;
 	unsigned int iterations_between_reports;
 };
+
+#endif

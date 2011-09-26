@@ -71,16 +71,15 @@ int main(int argc, char *argv[]) {
 	int input;
 	db* test = NULL;
 	drive_object* drive = NULL;
+	steer_object* steer = NULL;
 	do {
 		cout << "   SimpleDriver Option Menu" << endl;
 		cout << "1. Start SimpleDriver" << endl;
 		cout << "2. Create Database and load files, calculating all stuff from the files (might take some time)" << endl;
-		cout << "3. create a new neural network" << endl;
-		cout << "4. load the previous neural network" << endl;
-		cout << "5. Train neural network with the data from ./data/data.output.input" << endl;
-		cout << "6. Train neural network with the data from the database." << endl;
-		cout << "7. Restore Database from file" << endl;
-		cout << "8. test to fix file -> lap transfer (there has to be a database loaded)" << endl;
+		cout << "3. neural network for the steer class" << endl;
+		cout << "4. neural network for the drive class" << endl;
+		cout << "5. Restore Database from file" << endl;
+		cout << "6. test to fix file -> lap transfer (there has to be a database loaded)" << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;
@@ -104,26 +103,64 @@ int main(int argc, char *argv[]) {
 		}
 		if(input == 3) 
 		{
-			if(drive != NULL)
-				delete drive;
-			drive = new drive_object(test);
-			
+			int input2;
+			do {
+				cout << "1. create a new neural network" << endl;
+				cout << "2. load the previous neural network" << endl;
+				cout << "3. Train drive neural network with the data from a file" << endl;
+	//			cout << "4. Train drive neural network with the data from the database." << endl;
+				cout << "0. back" << endl;
+				cin >> input2;
+				
+				if(input2 == 1) {
+					if(steer != NULL)
+						delete steer;
+					steer = new steer_object(test);
+				}
+				if(input2 == 2) {
+					if(steer == NULL)
+						steer = new steer_object(test);
+					steer->loadPrevNet();				
+				}
+				if(input2 == 3) {
+					steer->learnFromDataFolder();				
+				}
+			/*	if(input2 == 4) {
+					drive->learnFromDatabase();				
+				}*/
+			} while(input2 != 0);
 		}
 		if(input == 4)
 		{
-			if(drive == NULL)
-				drive = new drive_object(test);
-			drive->loadPrevNet();
+			int input2;
+			do{
+				cout << "1. create a new neural network" << endl;
+				cout << "2. load the previous neural network" << endl;
+				cout << "3. Train drive neural network with the data from a file" << endl;
+				cout << "4. Train drive neural network with the data from the database." << endl;
+				cout << "0. back" << endl;
+				cin >> input2;
+				
+				if(input2 == 1) {
+					if(drive != NULL)
+						delete drive;
+					drive = new drive_object(test);
+				}
+				if(input2 == 2) {
+					if(drive == NULL)
+						drive = new drive_object(test);
+					drive->loadPrevNet();				
+				}
+				if(input2 == 3) {
+					drive->learnFromDataFolder();				
+				}
+				if(input2 == 4) {
+					drive->learnFromDatabase();				
+				}
+			} while(input2 != 0);			
 		}
 		if(input == 5)
 		{
-			drive->learnFromDataFolder();
-		}
-		if(input == 6) 
-		{
-			drive->learnFromDatabase();
-		}
-		if(input == 7) {
 			if(test != NULL)
 				delete test;
 			fstream directory;
@@ -137,12 +174,19 @@ int main(int argc, char *argv[]) {
 			test = new db(ss1.str());
 			test->restoreDbaddLaps();
 		}
-
-		if(input == 8) {
+		if(input == 6) 
+		{
 			if(test != NULL) {
 				exampledb ex(test);
 				ex.start();
 			}
+		}
+		if(input == 7) {
+
+		}
+
+		if(input == 8) {
+
 		}
 	}
 	while(input != 0);

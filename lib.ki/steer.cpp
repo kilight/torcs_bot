@@ -20,7 +20,7 @@ steer_object::steer_object(db* database)
 steer_object::~steer_object(){}
 	
 	
-void drive_object::learnFromDataFolder() 
+void steer_object::learnFromDataFolder() 
 {
 	file data("./data/");
 	data.setName("data.input.output_steer");
@@ -37,8 +37,8 @@ void drive_object::learnFromDataFolder()
 	cout << "numPoints in file: " << numPoints << endl;
 
 	net.setNumData(numPoints);
-	net.setNumInput(num_inputs);
-	net.setNumOut(num_outputs);
+	net.setNumInput(num_steer_inputs);
+	net.setNumOut(num_steer_outputs);
 
 	fann_type** output = new fann_type*[net.getNumData()];
 	fann_type** input = new fann_type*[net.getNumData()];
@@ -56,23 +56,23 @@ void drive_object::learnFromDataFolder()
 		s=data.fetchNextData();
 		countPointsFetched++;
 		
-		inputvec = new fann_type[num_inputs];
-		outputvec = new fann_type[num_outputs];
+		inputvec = new fann_type[num_steer_inputs];
+		outputvec = new fann_type[num_steer_outputs];
 
 		float wheelSpinDifv=abs(s.getWheelSpinVel(0)-s.getWheelSpinVel(1));
 		float wheelSpinDifh=abs(s.getWheelSpinVel(2)-s.getWheelSpinVel(3));
 
-	inputvec[0]=s.getAngle();
-	// inputvec[1]=s.getTrackPos();
-	// inputvec[2]=s.getSpeedX();
-	// inputvec[3]=s.getSpeedY();	
+		inputvec[0]=s.getAngle();
+		// inputvec[1]=s.getTrackPos();
+		// inputvec[2]=s.getSpeedX();
+		// inputvec[3]=s.getSpeedY();	
 
-	string X="+";
-	string Y=" steer value ";
-	ofstream outD1("lib.ki/debug.data/debug.learn.steer",ios_base::app);
-	outD1<<inputvec[0]<<X<<inputvec[1]<<X<<inputvec[2]<<X<<inputvec[3]<<Y<<s.getSteer()<<endl;
+		string X="+";
+		string Y=" steer value ";
+		ofstream outD1("lib.ki/debug.data/debug.learn.steer",ios_base::app);
+		outD1<<inputvec[0]<<X<<inputvec[1]<<X<<inputvec[2]<<X<<inputvec[3]<<Y<<s.getSteer()<<endl;
 
-	outputvec[0]=s.getSteer()*0.785398;
+		outputvec[0]=s.getSteer()*0.785398;
 
 		/* accel brake 
 		inputvec[0]=wheelSpinDifv/5+wheelSpinDifh;
@@ -102,6 +102,7 @@ void steer_object::race(CarState &cs)
 {
 	int view=0;	
 	int track=0;
+	int stuck=200;
 	
 	float direction[19];
 	direction[9]=0;							// set angle[0]=0

@@ -16,8 +16,8 @@ using namespace std;
 #include"../lib.db/db.h"
 #include"fann_net.h"
 
-const int num_inputs = 1;
-const int num_outputs = 1;
+const int num_steer_inputs = 1;
+const int num_steer_outputs = 1;
 
 class steer_object
 {
