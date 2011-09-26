@@ -26,8 +26,8 @@ CarControl SimpleDriver::wDrive(CarState cs)
 */
 
 
-
-/*	if(fabs(cs.getAngle())>stuckAngle){stuck++;}
+/*
+	if(fabs(cs.getAngle())>stuckAngle){stuck++;}
 	else{stuck = 0;}
 
     	if(stuck>stuckTime)
