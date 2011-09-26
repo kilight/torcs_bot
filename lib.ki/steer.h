@@ -22,7 +22,8 @@ private:	db* database;
 public:		 steer_object();		// race constructor
 		// steer_object(db* database);	// learn constructor
 		~steer_object();
-
+		
+		
 		float steer;
 		float track[18];
 		float getSteer(void){return steer;}

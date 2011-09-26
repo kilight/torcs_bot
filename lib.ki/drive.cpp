@@ -144,27 +144,34 @@ void drive_object::race(CarState &cs)
 		float t0=(cs.getTrack(8)+cs.getTrack(9)+cs.getTrack(10));
 		float t1=(cs.getTrack(13)+cs.getTrack(14)+cs.getTrack(15));
 		float t2=(cs.getTrack(5)+cs.getTrack(4)+cs.getTrack(3));
-
-	if(wheelSpinDifh<3)
+	//wheelSpinDifh<4
+	if(wheelSpinDifh < 3)
 	{
 		accel=exp(-2.5f*(float)pow(wheelSpinDifv/5+wheelSpinDifh,2))*(1-abs(cs.getTrackPos()))*(3.141-abs(cs.getAngle()))/3.141;
+		if(t0 > 450)
+			accel = 1;
 		brake=0;
 	}
 
-	else if(wheelSpinDifh>5)
+	else if(t0 < 350)
 	{
-		brake=((-1)*exp(-0.01f*pow(wheelSpinDifh,2))+1);
+		brake=(-1)*exp(-0.01f*pow(wheelSpinDifh,2))+1;
+		if(t0 < 250 && brake < 0.6 && cs.getSpeedX() > 100)
+			brake += 0.4;
+		if(t0 < 150 && brake < 0.8 && cs.getSpeedX() > 80)
+			brake += 0.2;
 		accel=0;
 
 	}
 	else {accel=0,brake=0;}
-	if(cs.getSpeedX()<10){accel=1,brake=0;}
+	if(cs.getSpeedX()<20){accel=1,brake=0;}
+	if(cs.getTrackPos() > 1 || cs.getTrackPos() < -1) {accel *= 0.5;}
 
 
-		/*char format[3]={':','+','='};
+		char format[3]={':','+','='};
 		ofstream outD5("lib.ki/debug.data/debug.send.race",ios_base::app);
 		outD5<<cs.getCurLapTime()<<format[0]<<wheelSpinDifh<<format[1]<<t0<<format[1]<<endl
-		     <<t1<<format[1]<<t0<<format[2]<<accel<<endl;*/
+		     <<t1<<format[1]<<t0<<format[2]<<accel<<endl;
 
 		/*float track[19];
 		for(int i=0;i<19;i++){track[i]=cs.getTrack(i);}*/
