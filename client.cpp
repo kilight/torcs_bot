@@ -33,6 +33,7 @@
 #include <cstdio>
 #include __DRIVER_INCLUDE__
 #include "./lib.ki/drive.h"
+#include "./lib.ki/steer.h"
 #include "./lib.db/db.h"
 #include "./lib.db/exampledb.h"
 
@@ -69,14 +70,17 @@ int startClient(int argc, char* argv[]);
 int main(int argc, char *argv[]) {
 	int input;
 	db* test = NULL;
+	drive_object* drive = NULL;
 	do {
 		cout << "   SimpleDriver Option Menu" << endl;
 		cout << "1. Start SimpleDriver" << endl;
 		cout << "2. Create Database and load files, calculating all stuff from the files (might take some time)" << endl;
-		cout << "3. Train neural network with the data from ./data/data.output.input" << endl;
-		cout << "4. Restore Database from file" << endl;
-		cout << "5. Train neural network with the data from the database." << endl;
-		cout << "6. test to fix file -> lap transfer (there has to be a database loaded)" << endl;
+		cout << "3. create a new neural network" << endl;
+		cout << "4. load the previous neural network" << endl;
+		cout << "5. Train neural network with the data from ./data/data.output.input" << endl;
+		cout << "6. Train neural network with the data from the database." << endl;
+		cout << "7. Restore Database from file" << endl;
+		cout << "8. test to fix file -> lap transfer (there has to be a database loaded)" << endl;
 		cout << "0. to quit." << endl;
 		
 		cin >> input;
@@ -100,10 +104,26 @@ int main(int argc, char *argv[]) {
 		}
 		if(input == 3) 
 		{
-			drive_object* drive=new drive_object(test);
+			if(drive != NULL)
+				delete drive;
+			drive = new drive_object(test);
+			
+		}
+		if(input == 4)
+		{
+			if(drive == NULL)
+				drive = new drive_object(test);
+			drive->loadPrevNet();
+		}
+		if(input == 5)
+		{
 			drive->learnFromDataFolder();
 		}
-		if(input == 4) {
+		if(input == 6) 
+		{
+			drive->learnFromDatabase();
+		}
+		if(input == 7) {
 			if(test != NULL)
 				delete test;
 			fstream directory;
@@ -117,12 +137,8 @@ int main(int argc, char *argv[]) {
 			test = new db(ss1.str());
 			test->restoreDbaddLaps();
 		}
-		if(input == 5) 
-		{
-			drive_object* drive=new drive_object(test);
-			drive->learnFromDatabase();
-		}
-		if(input == 6) {
+
+		if(input == 8) {
 			if(test != NULL) {
 				exampledb ex(test);
 				ex.start();
