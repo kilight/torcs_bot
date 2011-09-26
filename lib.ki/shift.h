@@ -24,8 +24,8 @@ public:		 shift_object();		// race constructor
 		 shift_object(db* database);	// learn constructor
 		~shift_object();
 
-		float geUp[6];
-		float geDo[6];
+		int geUp[6];
+		int geDo[6];
 
 		int gear;
 		int rpm;

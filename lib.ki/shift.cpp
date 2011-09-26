@@ -10,44 +10,50 @@ shift_object::shift_object()
 	// set to standart constructor if in use
 	/***************************************/
 	// read shift point upshifting
-	ifstream g1up("lib.ki/shift.miner/g1up.miner");
-	ifstream g2up("lib.ki/shift.miner/g2up.miner");
-	ifstream g3up("lib.ki/shift.miner/g3up.miner");
-	ifstream g4up("lib.ki/shift.miner/g4up.miner");
-	ifstream g5up("lib.ki/shift.miner/g5up.miner");
-	ifstream g6up("lib.ki/shift.miner/g6up.miner");
-	g1up>>geUp[0];
-	g2up>>geUp[1];
-	g3up>>geUp[2];
-	g4up>>geUp[3];
-	g5up>>geUp[4];
-	g6up>>geUp[5];
-	g1up.close();
-	g2up.close();
-	g3up.close();
-	g4up.close();
-	g5up.close();
-	g6up.close();
+	fstream gup[6];
+	gup[0].open("lib.ki/shift.miner/g1up.miner", fstream::in | fstream::out );
+	gup[1].open("lib.ki/shift.miner/g2up.miner", fstream::in | fstream::out );
+	gup[2].open("lib.ki/shift.miner/g3up.miner", fstream::in | fstream::out );
+	gup[3].open("lib.ki/shift.miner/g4up.miner", fstream::in | fstream::out );
+	gup[4].open("lib.ki/shift.miner/g5up.miner", fstream::in | fstream::out );
+	gup[5].open("lib.ki/shift.miner/g6up.miner", fstream::in | fstream::out );
+	for(int i = 0; i < 6; i++) {
+		if(gup[i].fail())
+			throw "failed to open file " + i;
+		geUp[i] = 0;           
+		gup[i] >> geUp[i];
+		if(geUp[i] <= 0) {
+			gup[i] << 6000;
+			geUp[i] = 6000;
+		}
+		else {
+			gup[i] << geUp[i];
+		}  
+		gup[i].close();
+	}
 	/***************************************/
 	// read shift point downshifting
-	ifstream g2do("lib.ki/shift.miner/g2do.miner");
-	ifstream g3do("lib.ki/shift.miner/g3do.miner");
-	ifstream g4do("lib.ki/shift.miner/g4do.miner");
-	ifstream g5do("lib.ki/shift.miner/g5do.miner");
-	ifstream g6do("lib.ki/shift.miner/g6do.miner");
-	ifstream g7do("lib.ki/shift.miner/g7do.miner");
-	g2do>>geDo[0];
-	g3do>>geDo[1];
-	g4do>>geDo[2];
-	g5do>>geDo[3];
-	g6do>>geDo[4];
-	g7do>>geDo[5];
-	g2do.close();
-	g3do.close();
-	g4do.close();
-	g5do.close();
-	g6do.close();
-	g7do.close();
+	fstream gdo[6];
+	gdo[0].open("lib.ki/shift.miner/g2do.miner", fstream::in | fstream::out );
+	gdo[1].open("lib.ki/shift.miner/g3do.miner", fstream::in | fstream::out );
+	gdo[2].open("lib.ki/shift.miner/g4do.miner", fstream::in | fstream::out );
+	gdo[3].open("lib.ki/shift.miner/g5do.miner", fstream::in | fstream::out );
+	gdo[4].open("lib.ki/shift.miner/g6do.miner", fstream::in | fstream::out );
+	gdo[5].open("lib.ki/shift.miner/g7do.miner", fstream::in | fstream::out );
+	for(int i = 0; i < 6; i++) {
+		if(gdo[i].fail())
+			throw "failed to open file " + i;
+		geDo[i] = 0;           
+		gdo[i] >> geDo[i];
+		if(geDo[i] <= 0) {
+			gdo[i] << 3000;
+			geDo[i] = 3000;
+		}
+		else {
+			gdo[i] << geDo[i];
+		}
+		gdo[i].close();
+	}
 	/***************************************/
 	// read speedX from speed.miner
 	// set to standart constructor if in use
