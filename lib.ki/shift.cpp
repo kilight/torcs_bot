@@ -263,46 +263,50 @@ void shift_object::reinforcement(CarState &cs)
 
 int shift_object::tree(CarState &cs)
 {	
-	int gear=cs.getGear();
-	int rpm=cs.getRpm();
-
 	// read speedX and rpm from dataminer
 	// set to standart constructor if in use
 	/***************************************/
-	float mind_speed=0;
-	ifstream inSpeedFile("lib.ki/mind_speed.dat");
+	float mind_speed;
+	ifstream inSpeedFile("lib.ki/shift.miner/mind_speed.dat");
 	inSpeedFile>>mind_speed;
+	inSpeedFile.close();
 	int mind_rpm;
-	ifstream inRpmFile("lib.ki/mind_rpm.dat");
+	ifstream inRpmFile("lib.ki/shift.miner/mind_rpm.dat");
 	inRpmFile>>mind_rpm;
+	inRpmFile.close();
 	/***************************************/
-	if(gear==0 || gear==-1){return 1;}
+	if(gear==0 || gear==-1){gear=1;}
 
 	// write current speedX and rpm to dataminer
 	/*******************************************/
-	ofstream outSpeedFile("lib.ki/mind_speed.dat");
+	ofstream outSpeedFile("lib.ki/shift.miner/mind_speed.dat");
 	outSpeedFile<<cs.getSpeedX();
+	outSpeedFile.close();
+	ofstream outRpmFile("lib.ki/shift.miner/mind_rpm.dat");
+	outRpmFile<<cs.getRpm();
+	outRpmFile.close();
+	/***************************************/
 
-	if(cs.getSpeedX()-mind_speed>0)
+
+	if(cs.getSpeedX()>mind_speed)
 	{
-		if(gear==1)	{if(rpm>=4000){return gear+1;};}
-		else if(gear==2){if(rpm>=5500){return gear+1;};}
-		else if(gear==3){if(rpm>=7000){return gear+1;};}
-		else if(gear==4){if(rpm>=8500){return gear+1;};}
-		else if(gear==5){if(rpm>=8500){return gear+1;};}
-		else if(gear==6){if(rpm>=9000){return gear+1;};}
-		else{return gear;}
+		if(gear==1)	{if(cs.getRpm()>=4000){gear+=1;};}
+		else if(gear==2){if(cs.getRpm()>=5500){gear+=1;};}
+		else if(gear==3){if(cs.getRpm()>=7000){gear+=1;};}
+		else if(gear==4){if(cs.getRpm()>=8500){gear+=1;};}
+		else if(gear==5){if(cs.getRpm()>=8500){gear+=1;};}
+		else if(gear==6){if(cs.getRpm()>=9000){gear+=1;};}
+		else{}
 	}
 	else
 	{
-		if(gear==1)	{if(rpm>=8000){return gear+1;};}
-		else if(gear==2){if(rpm<=1000){return gear-1;};}
-		else if(gear==3){if(rpm<=2000){return gear-1;};}
-		else if(gear==4){if(rpm<=4000){return gear-1;};}
-		else if(gear==5){if(rpm<=4000){return gear-1;};}
-		else if(gear==6){if(rpm<=5000){return gear-1;};}
-		else if(gear==7){if(rpm<=6000){return gear-1;};}
-		else{return gear;}
+		if(gear==2)	{if(cs.getRpm()<=1000){gear-=1;};}
+		else if(gear==3){if(cs.getRpm()<=2000){gear-=1;};}
+		else if(gear==4){if(cs.getRpm()<=4000){gear-=1;};}
+		else if(gear==5){if(cs.getRpm()<=4000){gear-=1;};}
+		else if(gear==6){if(cs.getRpm()<=5000){gear-=1;};}
+		else if(gear==7){if(cs.getRpm()<=6000){gear-=1;};}
+		else{}
 	}
 }
 /**   class shift_object learn.net   **

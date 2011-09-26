@@ -27,7 +27,7 @@ CarControl SimpleDriver::wDrive(CarState cs)
 
 
 
-	if(fabs(cs.getAngle())>stuckAngle){stuck++;}
+/*	if(fabs(cs.getAngle())>stuckAngle){stuck++;}
 	else{stuck = 0;}
 
     	if(stuck>stuckTime)
@@ -46,7 +46,7 @@ CarControl SimpleDriver::wDrive(CarState cs)
 	        return cc;
 	}
    	else
-	{
+	{*/
 
    	
 		// correcting the actual car angle getAngle() to 0
@@ -68,8 +68,9 @@ CarControl SimpleDriver::wDrive(CarState cs)
 		// ki racing interlink
 		/**********************************/
 		// shifting bot
-			shift.reinforcement(cs);
-			shift.race(cs);
+			// shift.reinforcement(cs);
+			// shift.race(cs);
+			shift.tree(cs);
 		// driving bot
 			driver.race(cs);
 			// driver.race_ki(cs);
@@ -80,7 +81,7 @@ CarControl SimpleDriver::wDrive(CarState cs)
 		/**********************************/
         	CarControl cc(driver.getAccel(),driver.getBrake(),shift.getGear(),steer.getSteer(),clutch);	
         	return cc;
-	}
+	
 }
 const float SimpleDriver::steerLock=0.785398;
 const float SimpleDriver::steerSensitivityOffset=160.0;
