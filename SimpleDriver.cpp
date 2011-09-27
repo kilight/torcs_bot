@@ -26,7 +26,7 @@ CarControl SimpleDriver::wDrive(CarState cs)
 */
 
 
-/*
+
 	if(fabs(cs.getAngle())>stuckAngle){stuck++;}
 	else{stuck = 0;}
 
@@ -46,7 +46,7 @@ CarControl SimpleDriver::wDrive(CarState cs)
 	        return cc;
 	}
    	else
-	{*/
+	{
 
    	
 		// correcting the actual car angle getAngle() to 0
@@ -75,13 +75,14 @@ CarControl SimpleDriver::wDrive(CarState cs)
 			driver.race(cs);
 			// driver.race_ki(cs);
 		// steering bot
+			// steer.race(cs);
 			steer.race(cs);
 		// clutching (stolen.code)
 			clutching(cs,clutch);
 		/**********************************/
         	CarControl cc(driver.getAccel(),driver.getBrake(),shift.getGear(),steer.getSteer(),clutch);	
         	return cc;
-	
+	}
 }
 const float SimpleDriver::steerLock=0.785398;
 const float SimpleDriver::steerSensitivityOffset=160.0;

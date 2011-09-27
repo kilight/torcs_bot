@@ -95,17 +95,18 @@ void fann_net::inputTraindata(fann_type** input, fann_type** output) {
 void fann_net::generateNet() {
 	std::ios::sync_with_stdio();
  	cout << endl << "Creating network." << endl;
-	unsigned int layers[5] = {num_input,8,16,2,num_output};
-	// net.create_standard_array(5,layers);	
-	net.create_sparse_array(10,5,layers);
-        // net.create_standard(num_layers, num_input, num_hidden, num_output);
+	unsigned int layers[5] = {num_input,4,8,2,num_output};
+	 net.create_standard_array(5,layers);	
+	// net.create_sparse_array(5,5,layers);
+	// net.create_shortcut_array(5,layers);
+        // net.create_shortcut(num_layers, num_input, num_hidden, num_output);
 
         net.set_learning_rate(learning_rate);
 
         net.set_activation_steepness_hidden(1.0);
         net.set_activation_steepness_output(1.0);
 
-	net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
+	net.set_training_algorithm(FANN::TRAIN_RPROP);
 	
 	// incremental
 	// batch
@@ -141,8 +142,8 @@ void fann_net::train() {
         cout << endl << "Saving network." << endl;
 
         // Save the network in floating point and fixed point
-        net.save("./lib.ki/net.miner/torcs.net");
-        unsigned int decimal_point = net.save_to_fixed("./lib.ki/net.miner/torcs_fixed.net");
+        net.save("./lib.ki/net.miner/torcs.steer.net");
+        unsigned int decimal_point = net.save_to_fixed("./lib.ki/net.miner/torcs.steer_fixed.net");
 }
 
 void fann_net::testData() {

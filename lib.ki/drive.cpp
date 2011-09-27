@@ -7,7 +7,7 @@
 *****************************/
 drive_object::drive_object(){
 	net.destroy();
-	net.create_from_file("./lib.ki/net.miner/torcs.net");
+	net.create_from_file("./lib.ki/net.miner/torcs.drive.net");
 }
 	
 drive_object::drive_object(db* database)
@@ -144,7 +144,7 @@ void drive_object::race(CarState &cs)
 		float t0=(cs.getTrack(8)+cs.getTrack(9)+cs.getTrack(10));
 		float t1=(cs.getTrack(13)+cs.getTrack(14)+cs.getTrack(15));
 		float t2=(cs.getTrack(5)+cs.getTrack(4)+cs.getTrack(3));
-	//wheelSpinDifh<4
+
 	if(wheelSpinDifh < 3)
 	{
 		accel=exp(-2.5f*(float)pow(wheelSpinDifv/5+wheelSpinDifh,2))*(1-abs(cs.getTrackPos()))*(3.141-abs(cs.getAngle()))/3.141;

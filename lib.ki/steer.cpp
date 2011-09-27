@@ -8,7 +8,7 @@ steer_object::steer_object()
 {
 	steer=0;
 	net.destroy();
-	net.create_from_file("./lib.ki/net.steer.miner/torcs.net");	
+	net.create_from_file("./lib.ki/net.miner/torcs.steer.net");	
 }
 
 steer_object::steer_object(db* database)
@@ -23,7 +23,7 @@ steer_object::~steer_object(){}
 void steer_object::learnFromDataFolder() 
 {
 	file data("./data/");
-	data.setName("data.input.output_steer");
+	data.setName("e-speedway");
 	data.open();
 	
 	sensor s;
@@ -59,35 +59,29 @@ void steer_object::learnFromDataFolder()
 		inputvec = new fann_type[num_steer_inputs];
 		outputvec = new fann_type[num_steer_outputs];
 
-		float wheelSpinDifv=abs(s.getWheelSpinVel(0)-s.getWheelSpinVel(1));
-		float wheelSpinDifh=abs(s.getWheelSpinVel(2)-s.getWheelSpinVel(3));
 
-		inputvec[0]=s.getAngle();
-		// inputvec[1]=s.getTrackPos();
-		// inputvec[2]=s.getSpeedX();
-		// inputvec[3]=s.getSpeedY();	
+	int track=0;
+	int view=9;
+	float direction[19];
 
-		string X="+";
-		string Y=" steer value ";
-		ofstream outD1("lib.ki/debug.data/debug.learn.steer",ios_base::app);
-		outD1<<inputvec[0]<<X<<inputvec[1]<<X<<inputvec[2]<<X<<inputvec[3]<<Y<<s.getSteer()<<endl;
+		direction[9]=0;							// set angle[0]=0
+		for (int i=0;i<5;i++){	direction[i]=-90+i*15;			// set angle[ 0 bis  4]={-90,-75,-60,-45,-30}
+					direction[18-i]=90-i*15;	}	// set angle[14 bis 18]={+30,+45,+60,+75,+90}
+		for (int i=5;i<9;i++){	direction[i]=-20+(i-5)*5;		// set angle[ 5 bis  8]={-20,-15,-10,-5}
+					direction[18-i]=20-(i-5)*5;	}	// set angle[10 bis 13]={+5,+10,+15,+20}
+										// viewCalculator
+		for(int i=0;i<16;i++)
+			{if((s.getTrack(i)+s.getTrack(i+1)+s.getTrack(i+2))>track){track=s.getTrack(i)+s.getTrack(i+1)+s.getTrack(i+2);view=i+1;}}
 
-		outputvec[0]=s.getSteer()*0.785398;
+		// for(int i=0;i<18;i++){inputvec[i]=s.getTrack(i);}
+		// inputvec[0]=s.getTrackPos();
+		// inputvec[1]=s.getSpeedX();
+		inputvec[0]=view;
 
-		/* accel brake 
-		inputvec[0]=wheelSpinDifv/5+wheelSpinDifh;
-		inputvec[1]=s.getTrack(8)+s.getTrack(9)+s.getTrack(10);
+		outputvec[0]=s.getSteer();
 
-		inputvec[2]=(s.getTrack(13))+(s.getTrack(14))+(s.getTrack(15)*(-1));
-		inputvec[3]=s.getTrack(13)+s.getTrack(14)+s.getTrack(15);
-
-		// inputvec[3]=1;
-		// inputvec[4]=1;
-
-		outputvec[0]=s.getAccel();
-		outputvec[1]=s.getBrake();
 	
-*/		input[k] = inputvec;
+		input[k] = inputvec;
 		output[k] = outputvec;
 	}
 	cout << "lap complete" << endl;
@@ -131,7 +125,7 @@ void steer_object::race(CarState &cs)
 	  else if (cs.getTrackPos() > 0.95 && track < 150)
 		{ view = 0;}
 
-	  cout << cs.getTrackPos() << " " << view << endl;
+//	  cout << cs.getTrackPos() << " " << view << endl;
 	}
 
 	if(cs.getTrackPos() < -0.8 && view < 9) { view = 9; }
@@ -150,6 +144,25 @@ void steer_object::race(CarState &cs)
 		char format[3]={':','+','='};
 		ofstream outD5("lib.ki/debug.data/debug.steer",ios_base::app);
 		outD5<<view<<format[0]<<track<<format[0]<<direction[view]<<format[0]<<steer<<format[0]<<stuck<<endl;
+}
+
+void steer_object::race_ki(CarState &cs)
+{
+	fann_type* input = new fann_type[num_steer_inputs];
+	fann_type* output = new fann_type[num_steer_outputs];
+
+	// for(int i=0;i<18;i++){input[i]=cs.getTrack(i);}
+	// input[0]=cs.getTrackPos();
+	// input[1]=cs.getSpeedX();
+
+	int track=0;
+	int view=9;
+	for(int i=0;i<16;i++)
+	{if((cs.getTrack(i)+cs.getTrack(i+1)+cs.getTrack(i+2))>track){track=cs.getTrack(i)+cs.getTrack(i+1)+cs.getTrack(i+2);view=i+1;}}
+	input[0]=view;
+
+	output=net.run(input);
+	steer=output[0];	
 }
 
 

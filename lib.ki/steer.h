@@ -41,6 +41,7 @@ public:		 steer_object();		// race constructor
 		}
 		
 		void race(CarState &cs);
+		void race_ki(CarState &cs);
 				
 };
 #endif
